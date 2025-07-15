@@ -2,6 +2,10 @@ package chess.game;
 
 public class Knight extends PiecesActs implements Piece {
 
+    public Knight(Position position, Color color) {
+        super(position, color);
+    }
+
     @Override
     public boolean isValidMove(Position targetPosition, Piece[][] board, int turnCount) {
         int r = this.position.getRow(),

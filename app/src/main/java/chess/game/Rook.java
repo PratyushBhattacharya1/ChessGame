@@ -4,6 +4,10 @@ public class Rook extends SlidingPieces implements Piece {
 
     private boolean hasMoved = false;
 
+    public Rook(Position position, Color color) {
+        super(position, color);
+    }
+
     @Override
     public boolean isValidMove(Position targetPosition, Piece[][] board, int turnCount) {
         int r = targetPosition.getRow(),

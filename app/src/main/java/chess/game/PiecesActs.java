@@ -6,6 +6,11 @@ public abstract class PiecesActs {
     PieceName title;
     Color color;
 
+    public PiecesActs(Position position, Color color) {
+        this.position = new Position(position);
+        this.color = color;
+    }
+
     public Color getColor() {
         return this.color;
     } 

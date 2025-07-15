@@ -8,6 +8,6 @@ public interface Piece {
 
     public boolean isBlack();
 
-    boolean isValidMove(Position targetPosition, Piece board[][]);
+    boolean isValidMove(Position targetPosition, Piece board[][], int turnCount);
     
 }

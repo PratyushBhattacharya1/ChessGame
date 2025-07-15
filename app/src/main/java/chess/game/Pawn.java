@@ -2,6 +2,10 @@ package chess.game;
 
 public class Pawn extends PiecesActs implements Piece {
 
+    public Pawn(Position position, Color color) {
+        super(position, color);
+    }
+
     // private boolean enPassant = false;
     private int enPassentTurn = 0;
 
@@ -48,7 +52,6 @@ public class Pawn extends PiecesActs implements Piece {
     }
 
     public boolean isValidMove(Position targetPosition, Piece[][] board, int turnCount) {
-        if (targetPosition == null || board == null) throw new IllegalArgumentException("Target position and board cannot be null");
         // Get position details
         int r = this.position.getRow(),
             c = this.position.getColumn(),

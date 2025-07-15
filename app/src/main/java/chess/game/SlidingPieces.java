@@ -2,6 +2,10 @@ package chess.game;
 
 public abstract class SlidingPieces extends PiecesActs {
 
+    public SlidingPieces(Position position, Color color) {
+        super(position, color);
+    }
+
     protected boolean isValidRookMove(Position targetPosition, Piece board[][]) {
 
         int r = this.position.getRow(), 
