@@ -18,6 +18,10 @@ public abstract class PiecesActs {
         return this.color == Color.B;
     }
 
+    public void move(Position p) {
+        this.position.setPosition(p);
+    }
+
     @Override 
     public String toString() {
         return "" + this.color + this.title;

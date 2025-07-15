@@ -3,7 +3,7 @@ package chess.game;
 public class Knight extends PiecesActs implements Piece {
 
     @Override
-    public boolean isValidMove(Position targetPosition, Piece[][] board) {
+    public boolean isValidMove(Position targetPosition, Piece[][] board, int turnCount) {
         int r = this.position.getRow(),
             c = this.position.getColumn(),
             newR = targetPosition.getRow(),

@@ -3,7 +3,7 @@ package chess.game;
 public class Queen extends SlidingPieces implements Piece {
 
     @Override
-    public boolean isValidMove(Position targetPosition, Piece[][] board) {
+    public boolean isValidMove(Position targetPosition, Piece[][] board, int turnCount) {
         int r = targetPosition.getRow(),
             c = targetPosition.getColumn();
 
