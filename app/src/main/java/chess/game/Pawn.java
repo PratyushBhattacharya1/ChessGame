@@ -12,13 +12,13 @@ public class Pawn extends PiecesActs implements Piece {
     // public boolean isValidMove(Position targetPosition, Piece[][] board) {
         // if (targetPosition == null || board == null) throw new IllegalArgumentException("Target position and board cannot be null");
 
-        // // Get position details
+        // Get position details
         // int r = this.position.getRow(),
         //     c = this.position.getColumn(),
         //     newR = targetPosition.getRow(),
         //     newC = targetPosition.getColumn();
 
-        // // Handle initial two-square move
+        // Handle initial two-square move
         // if (this.isWhite() && r == 6 && newR == 4 && c == newC && board[5][c] == null && board[6][c] == null) {
         //     enPassant = true;
         //     return true;
@@ -28,11 +28,11 @@ public class Pawn extends PiecesActs implements Piece {
         //     return true;
         // }
 
-        // // Handle single square move
+        // Handle single square move
         // if (this.isBlack() && newR == r + 1 && c == newC && board[newR][c] == null) return true;
         // if (this.isWhite() && newR == r - 1 && c == newC && board[newR][c] == null) return true;
 
-        // // Handle diagonal capture
+        // Handle diagonal capture
         // if (this.isBlack() && newR == r + 1 && Math.abs(newC - c) == 1 && board[newR][newC] != null && board[newR][newC].getColor() != this.color) return true;
         // if (this.isWhite() && newR == r - 1 && Math.abs(newC - c) == 1 && board[newR][newC] != null && board[newR][newC].getColor() != this.color) return true;
 
@@ -81,13 +81,13 @@ public class Pawn extends PiecesActs implements Piece {
         // Handle enPassent
         if (this.isBlack() && r == 5 && newR == 6 && Math.abs(newC - c) == 1 && board[newR][newC] == null && board[r][newC] != null) {
             Piece piece = board[r][newC];
-            if (piece.getClass().equals(this.getClass())) {
+            if (piece instanceof Pawn) {
                 Pawn pawn = (Pawn) piece;
                 if (pawn.getEnPassentTurn() == turnCount) return true;
             }
         } else if (this.isWhite() && r == 2 && newR == 1 && Math.abs(newC - c) == 1 && board[newR][newC] == null && board[r][newC] != null) {
             Piece piece = board[r][newC];
-            if (piece.getClass().equals(this.getClass())) {
+            if (piece instanceof Pawn) {
                 Pawn pawn = (Pawn) piece;
                 if (pawn.getEnPassentTurn() - 1 == turnCount) return true;
             }
