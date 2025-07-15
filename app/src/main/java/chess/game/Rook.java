@@ -13,7 +13,7 @@ public class Rook extends SlidingPieces implements Piece {
         int r = targetPosition.getRow(),
             c = targetPosition.getColumn();
 
-        if (board[r][c] != null && board[r][c].getColor() == this.color) return false;
+        // if (board[r][c] != null && board[r][c].getColor() == this.color) return false;
 
         return super.isValidRookMove(targetPosition, board);
     }
