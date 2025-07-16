@@ -3,7 +3,6 @@ package chess.game;
 public abstract class PiecesActs {
 
     Position position;
-    PieceName title;
     Color color;
 
     public PiecesActs(Position position, Color color) {
@@ -29,7 +28,7 @@ public abstract class PiecesActs {
 
     @Override 
     public String toString() {
-        return "" + this.color + this.title;
+        return "" + this.color + this.getClass();
     }
     
 }

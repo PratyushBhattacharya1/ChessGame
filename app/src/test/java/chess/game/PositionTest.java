@@ -155,7 +155,7 @@ public class PositionTest {
         Position p3 = new Position(4, 3);
         assertTrue(p1.equals(p2));
         assertFalse(p1.equals(p3));
-        assertFalse(p1.equals("not a position"));
+        assertFalse(p1.equals(new Position(3, 2)));
     }
 
     @Test

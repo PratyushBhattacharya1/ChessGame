@@ -211,7 +211,7 @@ public class Position {
 
     @Override
     public boolean equals(Object obj) {
-        if (!obj.getClass().equals(this.getClass())) return false;
+        if (!(obj instanceof Position)) return false;
 
         Position p = (Position) obj;
 
