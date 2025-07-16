@@ -152,23 +152,21 @@ public class Chessboard {
         else if (this.turnColor != piece.getColor()) return false;
 
         if (!piece.isValidMove(targetPosition, board, this.turnCount)) {
-            if (piece instanceof Pawn) {
-                ((Pawn)piece).setEnPassentTurn(0);
-            }
             return false;
         }
 
         Piece[][] newBoard = this.movePiece(piece, targetPosition, board);
 
+        // TODO: Fails if the king moves this turn because whiteKing isn't updated by the time it calls isInCheck()
         if ((this.isWhiteTurn() && this.whiteKing.isInCheck(newBoard)) || (this.isBlackTurn() && this.blackKing.isInCheck(newBoard))) {
             if (piece instanceof Pawn) {
-                ((Pawn)piece).setEnPassentTurn(0);
+                ((Pawn)piece).setEnPassantTurn(Pawn.DEFAULT_EN_PASSANT_TURN_VALUE);
             }
             return false;
         }
 
         if (piece instanceof King) {
-            if (isWhiteTurn()) this.whiteKing = (King) piece;
+            if (this.isWhiteTurn()) this.whiteKing = (King) piece;
             else this.blackKing = (King) piece;
         }
 

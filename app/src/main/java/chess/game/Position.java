@@ -109,18 +109,6 @@ public class Position {
         this.setPosition(this.row, column);
     }
 
-    /**
-     * Checks if the given Position object represents a valid position on a standard 8x8 chessboard.
-     *
-     * @param p the Position object to validate
-     * @return {@code true} if the position is within the bounds of the chessboard (rows and columns between 0 and 7 inclusive), false otherwise
-     */
-    public static boolean isValidPosition(Position p) {
-        int row = p.getRow();
-        int column = p.getColumn();
-
-        return (row < 8 && row >= 0 && column < 8 && column >= 0);
-    }
 
     /**
      * Checks if the given row and column represent a valid position on an 8x8 chessboard.

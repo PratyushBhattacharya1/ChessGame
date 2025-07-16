@@ -5,11 +5,17 @@ package chess.game;
  */
 public class Pawn extends PiecesActs implements Piece {
 
+    private static final int BLACK_ONE_SQUARE_UP = 2;
+    private static final int WHITE_ONE_SQUARE_UP = 5;
+    private static final int BLACK_TWO_SQUARES_UP = 3;
+    private static final int WHITE_TWO_SQUARES_UP = 4;
+    private static final int BLACK_PAWN_ROW = 1;
     private static final int WHITE_PAWN_ROW = 6;
+    public static final int DEFAULT_EN_PASSANT_TURN_VALUE = 0;
     /**
      * The turn count when this pawn can perform an en passant capture.
      */
-    private int enPassentTurn = 0;
+    private int enPassantTurn = DEFAULT_EN_PASSANT_TURN_VALUE;
 
     /**
      * Constructs a {@code Pawn} chess piece at the specified position and color.
@@ -26,8 +32,8 @@ public class Pawn extends PiecesActs implements Piece {
      *
      * @return the turn count for en passant
      */
-    public int getEnPassentTurn() {
-        return this.enPassentTurn;
+    public int getEnPassantTurn() {
+        return this.enPassantTurn;
     }
 
     /**
@@ -35,8 +41,8 @@ public class Pawn extends PiecesActs implements Piece {
      *
      * @param turnCount the turn count for en passant
      */
-    public void setEnPassentTurn(int turnCount) {
-        this.enPassentTurn = turnCount;
+    public void setEnPassantTurn(int turnCount) {
+        this.enPassantTurn = turnCount;
     }
 
     /**
@@ -55,14 +61,15 @@ public class Pawn extends PiecesActs implements Piece {
             newC = targetPosition.getColumn();
 
         // Handle initial two-square move
-        if (this.isWhite() && r == WHITE_PAWN_ROW && newR == 4 && c == newC && board[5][c] == null && board[6][c] == null) {
-            this.setEnPassentTurn(turnCount);
+        if (this.isBlack() && r == BLACK_PAWN_ROW && newR == BLACK_TWO_SQUARES_UP && c == newC 
+            && board[BLACK_ONE_SQUARE_UP][c] == null && board[BLACK_TWO_SQUARES_UP][c] == null) {
             return true;
         }
-        if (this.isBlack() && r == 1 && newR == 3 && c == newC && board[2][c] == null && board[3][c] == null) {
-            this.setEnPassentTurn(turnCount);
+        if (this.isWhite() && r == WHITE_PAWN_ROW && newR == WHITE_TWO_SQUARES_UP && c == newC 
+            && board[WHITE_ONE_SQUARE_UP][c] == null && board[WHITE_TWO_SQUARES_UP][c] == null) {
             return true;
         }
+
 
         // Handle single square move
         if (this.isBlack() && newR == r + 1 && c == newC && board[newR][c] == null) return true;
@@ -70,27 +77,34 @@ public class Pawn extends PiecesActs implements Piece {
 
         // Handle diagonal capture
         if (this.isBlack() && newR == r + 1 && Math.abs(newC - c) == 1 
-            && board[newR][newC] != null && board[newR][newC].getColor() != this.color) return true;
+            && board[newR][newC] != null && board[newR][newC].getColor() != this.color) 
+                return true;
         if (this.isWhite() && newR == r - 1 
-            && Math.abs(newC - c) == 1 && board[newR][newC] != null && board[newR][newC].getColor() != this.color) return true;
+            && Math.abs(newC - c) == 1 && board[newR][newC] != null 
+            && board[newR][newC].getColor() != this.color) 
+                return true;
 
 
         // Handle enPassent
-        // If very specific conditions for en passent for black have been met
-        if (this.isBlack() && r == 5 && newR == WHITE_PAWN_ROW && Math.abs(newC - c) == 1 && board[newR][newC] == null && board[r][newC] != null) {
+        // If very specific conditions for en passant for black have been met
+        if (this.isBlack() && r == WHITE_TWO_SQUARES_UP && newR == WHITE_ONE_SQUARE_UP 
+            && Math.abs(newC - c) == 1 && board[newR][newC] == null && board[r][newC] != null) {
+
             Piece piece = board[r][newC];
             // Verify the adjacent piece is a pawn
             if (piece instanceof Pawn) {
                 Pawn pawn = (Pawn) piece;
-                // Allow enPassent if black is performing enPassent on the same turn as white
-                if (pawn.getEnPassentTurn() == turnCount) return true;
+                // Allow enPassent if black is performing en passant on the same turn as white
+                if (pawn.getEnPassantTurn() == turnCount) return true;
             }
-        } else if (this.isWhite() && r == 2 && newR == 1 && Math.abs(newC - c) == 1 && board[newR][newC] == null && board[r][newC] != null) {
+        } else if (this.isWhite() && r == BLACK_TWO_SQUARES_UP && newR == BLACK_ONE_SQUARE_UP 
+            && Math.abs(newC - c) == 1 && board[newR][newC] == null && board[r][newC] != null) {
+
             Piece piece = board[r][newC];
             if (piece instanceof Pawn) {
                 Pawn pawn = (Pawn) piece;
-                // Same logic except allow white to do enPassent only if the black pawn pushed two squares one turn ago
-                if (pawn.getEnPassentTurn() - 1 == turnCount) return true;
+                // Same logic except allow white to do en passant only if the black pawn pushed two squares one turn ago
+                if (pawn.getEnPassantTurn() - 1 == turnCount) return true;
             }
         } 
 
@@ -100,23 +114,28 @@ public class Pawn extends PiecesActs implements Piece {
 
     @Override
     public String toString() {
-        return "" + (this.isWhite() ? "W" : "B") + (this.isWhite() ? "P" : "P");
+        return (this.isWhite() ? "W" : "B") + (this.isWhite() ? "P" : "P");
     }
 
-    // public void pawnMove(Position targetPosition, int turnCount) {
-    //     // Get position details
-    //     int r = this.position.getRow(),
-    //         c = this.position.getColumn(),
-    //         newR = targetPosition.getRow(),
-    //         newC = targetPosition.getColumn();
+    public boolean isPushingTwoSquares(Position targetPosition, Piece[][] board) {
+        // Get position details
+        int r = this.position.getRow(),
+            c = this.position.getColumn(),
+            newR = targetPosition.getRow(),
+            newC = targetPosition.getColumn();
 
-    //     // Handle initial two-square move
-    //     if (this.isWhite() && r == WHITE_PAWN_ROW && newR == 4 && c == newC && board[5][c] == null && board[6][c] == null) {
-    //         this.setEnPassentTurn(turnCount);
-    //     }
-    //     if (this.isBlack() && r == 1 && newR == 3 && c == newC && board[2][c] == null && board[3][c] == null) {
-    //         this.setEnPassentTurn(turnCount);
-    //     }
-    //     this.position.setPosition(targetPosition);
-    // }
+
+        // Handle initial two-square move
+        if (this.isBlack() && r == BLACK_PAWN_ROW && newR == BLACK_TWO_SQUARES_UP && c == newC 
+            && board[BLACK_ONE_SQUARE_UP][c] == null && board[BLACK_TWO_SQUARES_UP][c] == null) {
+            return true;
+        }
+        if (this.isWhite() && r == WHITE_PAWN_ROW && newR == WHITE_TWO_SQUARES_UP && c == newC 
+            && board[WHITE_ONE_SQUARE_UP][c] == null && board[WHITE_TWO_SQUARES_UP][c] == null) {
+            return true;
+        }
+
+
+        return false;
+    }
 }

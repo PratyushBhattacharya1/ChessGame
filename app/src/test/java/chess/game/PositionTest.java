@@ -94,12 +94,6 @@ public class PositionTest {
     }
 
     @Test
-    public void testIsValidPosition_StaticWithPosition() {
-        assertTrue(Position.isValidPosition(new Position(0, 0)));
-        assertTrue(Position.isValidPosition(new Position(7, 7)));
-    }
-
-    @Test
     public void testRankToRow() {
         assertEquals(7, Position.rankToRow('1'));
         assertEquals(0, Position.rankToRow('8'));
