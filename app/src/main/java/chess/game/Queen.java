@@ -42,4 +42,8 @@ public class Queen extends SlidingPieces implements Piece {
         return super.isValidRookMove(targetPosition, board) || super.isValidBishopMove(targetPosition, board);
     }
     
+    @Override
+    public String toString() {
+        return "" + (this.isWhite() ? "W" : "B") + (this.isWhite() ? "Q" : "Q");
+    }
 }

@@ -10,25 +10,23 @@ public abstract class PiecesActs {
         this.color = color;
     }
 
+    public Position getPosition() {
+        return this.position;
+    }
+
     public Color getColor() {
         return this.color;
-    } 
+    }
 
     public boolean isWhite() {
-        return this.color == Color.W;
+        return this.color == Color.White;
     }
 
     public boolean isBlack() {
-        return this.color == Color.B;
+        return this.color == Color.Black;
     }
 
     public void move(Position p) {
         this.position.setPosition(p);
     }
-
-    @Override 
-    public String toString() {
-        return "" + this.color + this.getClass();
-    }
-    
 }

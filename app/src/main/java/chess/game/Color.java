@@ -8,6 +8,6 @@ package chess.game;
  * </p>
  */
 public enum Color {
-    W,
-    B;
+    White,
+    Black;
 }

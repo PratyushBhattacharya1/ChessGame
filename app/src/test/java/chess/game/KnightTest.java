@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class KnightTest {
 
     Piece[][] board = new Piece[8][8];
-    Knight knight = new Knight(new Position(4, 4), Color.W);
+    Knight knight = new Knight(new Position(4, 4), Color.White);
 
     @Test
     public void testValidKnightMoveEmptyTarget() {
@@ -24,7 +24,7 @@ public class KnightTest {
     @Test
     public void testInvalidKnightMoveOwnPieceAtTarget() {
         // Place own piece at target
-        board[6][5] = new DummyPiece(new Position(6, 5), Color.W);
+        board[6][5] = new DummyPiece(new Position(6, 5), Color.White);
 
         assertFalse(knight.isValidMove(new Position(6, 5), board, 0));
     }
@@ -32,7 +32,7 @@ public class KnightTest {
     @Test
     public void testValidKnightMoveOpponentPieceAtTarget() {
         // Place opponent's piece at target
-        board[6][5] = new DummyPiece(new Position(6, 5), Color.B);
+        board[6][5] = new DummyPiece(new Position(6, 5), Color.Black);
 
         assertTrue(knight.isValidMove(new Position(6, 5), board, 0));
     }

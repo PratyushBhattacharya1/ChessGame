@@ -26,13 +26,18 @@ public class Rook extends SlidingPieces implements Piece {
         return super.isValidRookMove(targetPosition, board);
     }
 
-    public boolean getHasMoved() {
+    public boolean hasMoved() {
         return hasMoved;
     }
 
     public void move(Position p) {
         super.move(p);
         hasMoved = true;
+    }
+
+    @Override
+    public String toString() {
+        return "" + (this.isWhite() ? "W" : "B") + (this.isWhite() ? "R" : "R");
     }
     
 }

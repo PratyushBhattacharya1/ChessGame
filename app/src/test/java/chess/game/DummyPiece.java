@@ -17,12 +17,12 @@ final class DummyPiece implements Piece {
 
         @Override
         public boolean isWhite() {
-            return this.color == Color.W;
+            return this.color == Color.White;
         }
 
         @Override
         public boolean isBlack() {
-            return this.color == Color.B;
+            return this.color == Color.Black;
         }
         
         @Override

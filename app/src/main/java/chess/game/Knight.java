@@ -48,4 +48,13 @@ public class Knight extends PiecesActs implements Piece {
         return true;
     }
     
+    @Override
+    public String toString() {
+        return "" + (this.isWhite() ? "W" : "B") + (this.isWhite() ? "N" : "N");
+    }
+
+    // @Override
+    // public void move(Position p) {
+    //     super.move(p);
+    // }
 }

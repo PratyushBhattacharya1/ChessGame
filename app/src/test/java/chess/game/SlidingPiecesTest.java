@@ -26,8 +26,8 @@ public class SlidingPiecesTest {
 
     @BeforeEach
     public void setUp() {
-        whiteRook = new TestSlidingPiece(new Position(3, 3), Color.W);
-        blackBishop = new TestSlidingPiece(new Position(4, 5), Color.B);
+        whiteRook = new TestSlidingPiece(new Position(3, 3), Color.White);
+        blackBishop = new TestSlidingPiece(new Position(4, 5), Color.Black);
 
         board[3][3] = whiteRook;
         board[4][5] = blackBishop;
@@ -45,10 +45,10 @@ public class SlidingPiecesTest {
 
     @Test
     public void testInvalidRookMoveObstructed() {
-        board[3][4] = new DummyPiece(new Position(3, 4), Color.W); // Obstruction
-        board[3][2] = new DummyPiece(new Position(3, 2), Color.W); // Obstruction
-        board[4][3] = new DummyPiece(new Position(4, 3), Color.W); // Obstruction
-        board[2][3] = new DummyPiece(new Position(2, 3), Color.W); // Obstruction
+        board[3][4] = new DummyPiece(new Position(3, 4), Color.White); // Obstruction
+        board[3][2] = new DummyPiece(new Position(3, 2), Color.White); // Obstruction
+        board[4][3] = new DummyPiece(new Position(4, 3), Color.White); // Obstruction
+        board[2][3] = new DummyPiece(new Position(2, 3), Color.White); // Obstruction
 
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
@@ -64,10 +64,10 @@ public class SlidingPiecesTest {
 
     @Test
     public void testValidRookCapture() {
-        board[3][4] = new DummyPiece(new Position(3, 4), Color.B); // Obstruction
-        board[3][2] = new DummyPiece(new Position(3, 2), Color.B); // Obstruction
-        board[4][3] = new DummyPiece(new Position(4, 3), Color.B); // Obstruction
-        board[2][3] = new DummyPiece(new Position(2, 3), Color.B); // Obstruction
+        board[3][4] = new DummyPiece(new Position(3, 4), Color.Black); // Obstruction
+        board[3][2] = new DummyPiece(new Position(3, 2), Color.Black); // Obstruction
+        board[4][3] = new DummyPiece(new Position(4, 3), Color.Black); // Obstruction
+        board[2][3] = new DummyPiece(new Position(2, 3), Color.Black); // Obstruction
 
         assertTrue(whiteRook.isValidRookMove(new Position(3, 4), board));
         assertTrue(whiteRook.isValidRookMove(new Position(3, 2), board));
@@ -87,10 +87,10 @@ public class SlidingPiecesTest {
 
     @Test
     public void testInvalidBishopMoveObstructed() {
-        board[3][6] = new DummyPiece(new Position(3, 6), Color.B); // Obstruction on the diagonal
-        board[3][4] = new DummyPiece(new Position(3, 4), Color.B); // Obstruction on the diagonal
-        board[5][6] = new DummyPiece(new Position(5, 6), Color.B); // Obstruction on the diagonal
-        board[5][4] = new DummyPiece(new Position(5, 4), Color.B); // Obstruction on the diagonal
+        board[3][6] = new DummyPiece(new Position(3, 6), Color.Black); // Obstruction on the diagonal
+        board[3][4] = new DummyPiece(new Position(3, 4), Color.Black); // Obstruction on the diagonal
+        board[5][6] = new DummyPiece(new Position(5, 6), Color.Black); // Obstruction on the diagonal
+        board[5][4] = new DummyPiece(new Position(5, 4), Color.Black); // Obstruction on the diagonal
 
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
@@ -102,7 +102,7 @@ public class SlidingPiecesTest {
     @Test
     public void testValidBishopMoveLongDiagonalUnobstructed() {
         board[3][3] = null;
-        TestSlidingPiece blackBishop2 = new TestSlidingPiece(new Position(0, 0), Color.B);
+        TestSlidingPiece blackBishop2 = new TestSlidingPiece(new Position(0, 0), Color.Black);
         board[0][0] = blackBishop2;
         assertTrue(blackBishop2.isValidBishopMove(new Position(7, 7), board));
     }
@@ -114,10 +114,10 @@ public class SlidingPiecesTest {
 
     @Test
     public void testValidBishopCapture() {
-        board[3][6] = new DummyPiece(new Position(3, 6), Color.W); // Enemy on the diagonal
-        board[3][4] = new DummyPiece(new Position(3, 4), Color.W); // Enemy on the diagonal
-        board[5][6] = new DummyPiece(new Position(5, 6), Color.W); // Enemy on the diagonal
-        board[5][4] = new DummyPiece(new Position(5, 4), Color.W); // Enemy on the diagonal
+        board[3][6] = new DummyPiece(new Position(3, 6), Color.White); // Enemy on the diagonal
+        board[3][4] = new DummyPiece(new Position(3, 4), Color.White); // Enemy on the diagonal
+        board[5][6] = new DummyPiece(new Position(5, 6), Color.White); // Enemy on the diagonal
+        board[5][4] = new DummyPiece(new Position(5, 4), Color.White); // Enemy on the diagonal
 
         assertTrue(blackBishop.isValidBishopMove(new Position(3, 6), board));
         assertTrue(blackBishop.isValidBishopMove(new Position(3, 4), board));

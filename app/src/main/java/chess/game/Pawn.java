@@ -5,6 +5,7 @@ package chess.game;
  */
 public class Pawn extends PiecesActs implements Piece {
 
+    private static final int WHITE_PAWN_ROW = 6;
     /**
      * The turn count when this pawn can perform an en passant capture.
      */
@@ -54,7 +55,7 @@ public class Pawn extends PiecesActs implements Piece {
             newC = targetPosition.getColumn();
 
         // Handle initial two-square move
-        if (this.isWhite() && r == 6 && newR == 4 && c == newC && board[5][c] == null && board[6][c] == null) {
+        if (this.isWhite() && r == WHITE_PAWN_ROW && newR == 4 && c == newC && board[5][c] == null && board[6][c] == null) {
             this.setEnPassentTurn(turnCount);
             return true;
         }
@@ -68,13 +69,15 @@ public class Pawn extends PiecesActs implements Piece {
         if (this.isWhite() && newR == r - 1 && c == newC && board[newR][c] == null) return true;
 
         // Handle diagonal capture
-        if (this.isBlack() && newR == r + 1 && Math.abs(newC - c) == 1 && board[newR][newC] != null && board[newR][newC].getColor() != this.color) return true;
-        if (this.isWhite() && newR == r - 1 && Math.abs(newC - c) == 1 && board[newR][newC] != null && board[newR][newC].getColor() != this.color) return true;
+        if (this.isBlack() && newR == r + 1 && Math.abs(newC - c) == 1 
+            && board[newR][newC] != null && board[newR][newC].getColor() != this.color) return true;
+        if (this.isWhite() && newR == r - 1 
+            && Math.abs(newC - c) == 1 && board[newR][newC] != null && board[newR][newC].getColor() != this.color) return true;
 
 
         // Handle enPassent
         // If very specific conditions for en passent for black have been met
-        if (this.isBlack() && r == 5 && newR == 6 && Math.abs(newC - c) == 1 && board[newR][newC] == null && board[r][newC] != null) {
+        if (this.isBlack() && r == 5 && newR == WHITE_PAWN_ROW && Math.abs(newC - c) == 1 && board[newR][newC] == null && board[r][newC] != null) {
             Piece piece = board[r][newC];
             // Verify the adjacent piece is a pawn
             if (piece instanceof Pawn) {
@@ -91,8 +94,16 @@ public class Pawn extends PiecesActs implements Piece {
             }
         } 
 
-        if (newR == r ) return true;
-
+        // If none of the conditions are met, the move is invalid
         return false;
-    }    
+    }
+
+    @Override
+    public String toString() {
+        return "" + (this.isWhite() ? "W" : "B") + (this.isWhite() ? "P" : "P");
+    }
+
+    public void enPassentMove(Position position, int turnColor) {
+        this.position.setPosition(position);
+    }
 }

@@ -40,30 +40,28 @@ public abstract class SlidingPieces extends PiecesActs {
             newR = targetPosition.getRow(), 
             newC = targetPosition.getColumn();
 
-        // If either the column or row is unchanged but not both or neither
+        // If either the column XOR row is unchanged
         if (!(r == newR ^ c == newC)) return false;
-
-        // Iterate to find if any piece blocks path
-        // Left or right directions
-        if (r == newR) {
-            // Step either upwards or downwards
-            int step = (newC > c) ? 1 : -1;
-            // Check for any piece blocking the upwards/downwards path
-            for (int i = c + step; i != newC; i += step) {
-                if (board[r][i] != null) return false;
-            }
-        } else {
-            // Step either left or right
-            int step = (newR > r) ? 1 : -1;
-            for (int i = r + step; i != newR; i += step) {
-                if (board[i][c] != null) return false;
-            }
-        }
-
-        // Path is unblocked but found a same color piece at the very end
+        
+        // Target position cannot be the same color
         if (board[newR][newC] != null && board[newR][newC].getColor() == this.color) return false;
 
-        // Fully free path
+        int rowStep = 0;
+        int colStep = 0;
+
+        if (r == newR) {
+            rowStep = 0;
+            colStep = (newC > c) ? 1 : -1;
+        } else if (c == newC) {
+            rowStep = (newR > r) ? 1 : -1;
+            colStep = 0;
+        }
+        int steps = (r == newR) ? Math.abs(newC - c) : Math.abs(newR - r);
+
+        for (int i = 1; i < steps; i++) {
+            if (board[r + i * rowStep][c + i * colStep] != null) return false;
+        }
+
         return true;
     }
 
@@ -84,7 +82,7 @@ public abstract class SlidingPieces extends PiecesActs {
             newC = targetPosition.getColumn();
 
         // Absolute value difference between tiles must be equal to each other
-        if (Math.abs(r - newR) != Math.abs(c - newC)) return false;
+        if (Math.abs(r - newR) != Math.abs(c - newC) || targetPosition.equals(this.position)) return false;
 
         int rowStep = (newR > r) ? 1 : -1;
         int colStep = (newC > c) ? 1 : -1;
@@ -93,7 +91,7 @@ public abstract class SlidingPieces extends PiecesActs {
             if (board[r + i * rowStep][c + i * colStep] != null) return false;
         }
 
-        if (board[newR][newC] != null && board[newR][newC].getColor() == this.color || targetPosition.equals(this.position)) return false;
+        if (board[newR][newC] != null && board[newR][newC].getColor() == this.color) return false;
         
         return true;
     }

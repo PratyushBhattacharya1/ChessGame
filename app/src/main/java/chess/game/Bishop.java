@@ -33,5 +33,9 @@ public class Bishop extends SlidingPieces implements Piece {
     public boolean isValidMove(Position targetPosition, Piece[][] board, int turnCount) {
         return super.isValidBishopMove(targetPosition, board);
     }
-    
+
+    @Override
+    public String toString() {
+        return "" + (this.isWhite() ? "W" : "B") + (this.isWhite() ? "B" : "B");
+    }
 }

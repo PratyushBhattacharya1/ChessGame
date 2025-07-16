@@ -203,8 +203,8 @@ public class Position {
     public static Position stringToPosition(String s) {
         if (s.length() != 2) throw new IllegalArgumentException("Input string isn't two characters.");
         
-        int row = rankToRow(s.charAt(1));
-        int column = fileToColumn(s.charAt(0));
+        int row = Position.rankToRow(s.charAt(1));
+        int column = Position.fileToColumn(s.charAt(0));
 
         return new Position(row, column);
     }

@@ -15,8 +15,8 @@ public class QueenTest {
     public void setUp() {
         // 8x8 chess board
         board = new Piece[8][8];
-        whiteQueen = new Queen(new Position(3, 3), Color.W);
-        blackQueen = new Queen(new Position(4, 4), Color.B);
+        whiteQueen = new Queen(new Position(3, 3), Color.White);
+        blackQueen = new Queen(new Position(4, 4), Color.Black);
         board[3][3] = whiteQueen;
         board[4][4] = blackQueen;
     }
@@ -64,31 +64,31 @@ public class QueenTest {
     @Test
     public void testMoveBlockedBySameColorPiece() {
         // Place a white piece at (3, 5)
-        board[3][5] = new DummyPiece(new Position(3, 5), Color.W);
+        board[3][5] = new DummyPiece(new Position(3, 5), Color.White);
         assertFalse(whiteQueen.isValidMove(new Position(3, 5), board, 1));
         // Place a black piece at (4, 2)
-        board[4][2] = new DummyPiece(new Position(4, 2), Color.B);
+        board[4][2] = new DummyPiece(new Position(4, 2), Color.Black);
         assertFalse(blackQueen.isValidMove(new Position(4, 2), board, 1));
     }
 
     @Test
     public void testMoveCapturesOpponentPiece() {
         // Place a black piece at (3, 5)
-        board[3][5] = new DummyPiece(new Position(3, 5), Color.B);
+        board[3][5] = new DummyPiece(new Position(3, 5), Color.Black);
         assertTrue(whiteQueen.isValidMove(new Position(3, 5), board, 1));
         // Place a white piece at (4, 2)
-        board[4][2] = new DummyPiece(new Position(4, 2), Color.W);
+        board[4][2] = new DummyPiece(new Position(4, 2), Color.White);
         assertTrue(blackQueen.isValidMove(new Position(4, 2), board, 1));
     }
 
     @Test
     public void testMoveBlockedByPieceInPath() {
         // Place a piece between queen and target
-        board[3][5] = new DummyPiece(new Position(3, 5), Color.B);
+        board[3][5] = new DummyPiece(new Position(3, 5), Color.Black);
         // Queen tries to move to (3, 7) but path is blocked at (3, 5)
         assertFalse(whiteQueen.isValidMove(new Position(3, 7), board, 1));
         // Place a piece between black queen and target
-        board[4][2] = new DummyPiece(new Position(4, 2), Color.W);
+        board[4][2] = new DummyPiece(new Position(4, 2), Color.White);
         // Black queen tries to move to (4, 0) but path is blocked at (4, 2)
         assertFalse(blackQueen.isValidMove(new Position(4, 0), board, 1));
     }
