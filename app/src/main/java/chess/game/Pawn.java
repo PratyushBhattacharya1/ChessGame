@@ -103,7 +103,20 @@ public class Pawn extends PiecesActs implements Piece {
         return "" + (this.isWhite() ? "W" : "B") + (this.isWhite() ? "P" : "P");
     }
 
-    public void enPassentMove(Position position, int turnColor) {
-        this.position.setPosition(position);
-    }
+    // public void pawnMove(Position targetPosition, int turnCount) {
+    //     // Get position details
+    //     int r = this.position.getRow(),
+    //         c = this.position.getColumn(),
+    //         newR = targetPosition.getRow(),
+    //         newC = targetPosition.getColumn();
+
+    //     // Handle initial two-square move
+    //     if (this.isWhite() && r == WHITE_PAWN_ROW && newR == 4 && c == newC && board[5][c] == null && board[6][c] == null) {
+    //         this.setEnPassentTurn(turnCount);
+    //     }
+    //     if (this.isBlack() && r == 1 && newR == 3 && c == newC && board[2][c] == null && board[3][c] == null) {
+    //         this.setEnPassentTurn(turnCount);
+    //     }
+    //     this.position.setPosition(targetPosition);
+    // }
 }

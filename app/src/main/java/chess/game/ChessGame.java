@@ -3,38 +3,53 @@ package chess.game;
 import java.util.Scanner;
 
 public class ChessGame {
+    
+    /*
+     * Static constants
+     */
+    private static final int MOVE_SIZE = 4;
+    private static final int SECOND_PARTITION = 4;
+    private static final int FIRST_PARTITION = 2;
+
     public static void main(String[] args) {
         Chessboard chessboard = new Chessboard();
 
-        while(chessboard.getGameState() == GameState.unfinished) {
+        while(chessboard.getGameState() == GameState.ongoing) {
+            System.out.println();
             chessboard.printBoard();
 
             Scanner scanner = new Scanner(System.in);
             System.out.print("Enter your move: ");
             String move = scanner.nextLine();
 
-            if (move.equalsIgnoreCase("end")) {
+            if (move.equalsIgnoreCase("end") || move.equalsIgnoreCase("exit")) {
                 System.out.println("Exiting the game.");
                 chessboard.setGameState(GameState.draw);
-                break;
+                continue;
             }
 
-            if (move.length() != 4) {
+            if (move.length() != MOVE_SIZE) {
                 System.out.println("Input isn't four characters");
-                break;
+                continue;
             }
+
+            Position startingPosition;
+            Position targetPosition;
 
             try {
-                Position selectedPiece = Position.stringToPosition(move.substring(0, 2));
-                Position targetPosition = Position.stringToPosition(move.substring(2, 4));
+                startingPosition = Position.stringToPosition(move.substring(0, FIRST_PARTITION));
+                targetPosition = Position.stringToPosition(move.substring(FIRST_PARTITION, SECOND_PARTITION));
             } catch (IllegalArgumentException IllegalArgumentException) {
                 System.out.println("Position was invalid");
-                break;
+                continue;
             }
 
-            
+            if (!chessboard.tryMove(startingPosition, targetPosition)) {
+                System.out.println("Illegal move!");
+                continue;
+            }
 
-
+            chessboard.addToMoveHistory(move);
 
         }
     }

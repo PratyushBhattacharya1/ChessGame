@@ -30,4 +30,10 @@ final class DummyPiece implements Piece {
             // TODO Auto-generated method stub
             throw new UnsupportedOperationException("Unimplemented method 'isValidMove'");
         }
+
+        @Override
+        public void move(Position p) {
+            // TODO Auto-generated method stub
+            throw new UnsupportedOperationException("Unimplemented method 'move'");
+        }
     }

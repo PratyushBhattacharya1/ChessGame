@@ -1,7 +1,7 @@
 package chess.game;
 
 public enum GameState {
-    unfinished,
+    ongoing,
     whiteWon,
     blackWon,
     draw,
