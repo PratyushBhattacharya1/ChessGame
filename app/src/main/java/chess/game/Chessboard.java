@@ -197,6 +197,7 @@ public class Chessboard {
     public void printBoard() {
         System.out.printf("--- %s's turn: %d---\n", this.turnColor, this.turnCount);
 
+        //TODO: Make the letters/numbers clear on the printout
         Piece[][] board = getBoard();
         for (int i = 0; i < board.length; i++) {
             for (int j = 0; j < board[0].length; j++) {
