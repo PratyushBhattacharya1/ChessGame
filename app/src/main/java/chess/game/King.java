@@ -1,8 +1,11 @@
 package chess.game;
 
-import java.util.List;
+import java.util.Set;
 
 public class King extends SlidingPieces {
+
+    public static final int MAX_MOVES = 8;
+    public static final Title TITLE = Title.K;
 
     private static final Position[] CASTLE_POSITION_WHITE = 
         {new Position(7, 2), new Position(7, 6)};
@@ -14,7 +17,6 @@ public class King extends SlidingPieces {
 
     public King(Position position, Color color) {
         super(position, color);
-        this.title = Title.K;
     }
 
     @Override
@@ -149,7 +151,7 @@ public class King extends SlidingPieces {
     }
 
     @Override
-    public List<Position> generatePseudoLegalMoves(MoveContext mContext) {
+    public Set<Position> generatePseudoLegalMoves(MoveContext mContext) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'generatePseudoLegalMoves'");
     }

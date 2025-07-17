@@ -1,7 +1,7 @@
 package chess.game;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Represents a {@code Bishop} chess piece.
@@ -14,6 +14,9 @@ import java.util.List;
  */
 public class Bishop extends SlidingPieces {
 
+    public static final int MAX_MOVES = 13;
+    public static final Title TITLE = Title.B;
+
     /**
      * Constructs a Bishop chess piece with the specified position and color.
      *
@@ -22,7 +25,6 @@ public class Bishop extends SlidingPieces {
      */
     public Bishop(Position position, Color color) {
         super(position, color);
-        this.title = Title.B;
     }
 
     /**
@@ -39,13 +41,8 @@ public class Bishop extends SlidingPieces {
     }
 
     @Override
-    public String toString() {
-        return "" + (this.isWhite() ? "W" : "B") + "B";
-    }
-
-    @Override
-    public List<Position> generatePseudoLegalMoves(MoveContext mContext) {
-        List<Position> moves = new ArrayList<>();
+    public Set<Position> generatePseudoLegalMoves(MoveContext mContext) {
+        Set<Position> moves = new HashSet<>(MAX_MOVES);
         var board = mContext.getBoard();
 
         for (Direction dr : DIAGONALS) {

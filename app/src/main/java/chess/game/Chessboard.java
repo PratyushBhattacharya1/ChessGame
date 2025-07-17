@@ -1,6 +1,7 @@
 package chess.game;
 
 import java.util.ArrayList;
+import java.util.Set;
 import java.util.Stack;
 
 public class Chessboard {
@@ -32,6 +33,8 @@ public class Chessboard {
     private GameState gameState;
     private int turnCount;
     private Color turnColor;
+    private Set<Piece> whitePieces;
+    private Set<Piece> blackPieces;
 
     /**
      * Initializes the chessboard with pieces in their starting positions.
@@ -54,57 +57,37 @@ public class Chessboard {
 
         for (int i = 0; i < board.length; i++) {
             // Pawns
-            board[WHITE_PAWN_ROW][i] = new Pawn(new Position(WHITE_PAWN_ROW, i), Color.Black);
-            board[BLACK_PAWN_ROW][i] = new Pawn(new Position(BLACK_PAWN_ROW, i), Color.White);
+            Pawn pW = new Pawn(new Position(WHITE_PAWN_ROW, i), Color.Black);
+            Pawn pB = new Pawn(new Position(BLACK_PAWN_ROW, i), Color.White);
+
+            board[WHITE_PAWN_ROW][i] = pW;
+            blackPieces.add(pW);
+            board[BLACK_PAWN_ROW][i] = pB;
+            whitePieces.add(pB);
+
         }
 
         // Rooks
-        board[BLACK_BACK_ROW][QUEENSIDE_ROOKS_COLUMN] = 
-            new Rook(new Position(BLACK_BACK_ROW, QUEENSIDE_ROOKS_COLUMN), Color.Black);
-        board[BLACK_BACK_ROW][KINGSIDE_ROOKS_COLUMN] = 
-            new Rook(new Position(BLACK_BACK_ROW, KINGSIDE_ROOKS_COLUMN), Color.Black);
+        var rW1 = new Rook(new Position(WHITE_BACK_ROW, QUEENSIDE_ROOKS_COLUMN), Color.Black);
+        var rW2 = new Rook(new Position(WHITE_BACK_ROW, KINGSIDE_ROOKS_COLUMN), Color.Black);
+        var rB1 = new Rook(new Position(BLACK_BACK_ROW, QUEENSIDE_ROOKS_COLUMN), Color.White);
+        var rB2 = new Rook(new Position(BLACK_BACK_ROW, KINGSIDE_ROOKS_COLUMN), Color.White);
+        board[WHITE_BACK_ROW][QUEENSIDE_ROOKS_COLUMN] = rW1;
+        board[WHITE_BACK_ROW][KINGSIDE_ROOKS_COLUMN] = rW2;
+        board[BLACK_BACK_ROW][QUEENSIDE_ROOKS_COLUMN] = rB1;
+        board[BLACK_BACK_ROW][KINGSIDE_ROOKS_COLUMN] = rB2;
+        whitePieces.add(rW1);
+        whitePieces.add(rW2);
+        blackPieces.add(rB1);
+        blackPieces.add(rB2);
 
-        board[WHITE_BACK_ROW][QUEENSIDE_ROOKS_COLUMN] = 
-            new Rook(new Position(WHITE_BACK_ROW, QUEENSIDE_ROOKS_COLUMN), Color.White);
-        board[WHITE_BACK_ROW][KINGSIDE_ROOKS_COLUMN] = 
-            new Rook(new Position(WHITE_BACK_ROW, KINGSIDE_ROOKS_COLUMN), Color.White);
-
-        // Bishops
-        board[BLACK_BACK_ROW][QUEENSIDE_BISHOPS_COLUMN] = 
-            new Bishop(new Position(BLACK_BACK_ROW, QUEENSIDE_BISHOPS_COLUMN), Color.Black);
-        board[BLACK_BACK_ROW][KINGSIDE_BISHOPS_COLUMN] = 
-            new Bishop(new Position(BLACK_BACK_ROW, KINGSIDE_BISHOPS_COLUMN), Color.Black);
-
-        board[WHITE_BACK_ROW][QUEENSIDE_BISHOPS_COLUMN] = 
-            new Bishop(new Position(WHITE_BACK_ROW, QUEENSIDE_BISHOPS_COLUMN), Color.White);
-        board[WHITE_BACK_ROW][KINGSIDE_BISHOPS_COLUMN] = 
-            new Bishop(new Position(WHITE_BACK_ROW, KINGSIDE_BISHOPS_COLUMN), Color.White);
-
-        // Knights
-        board[BLACK_BACK_ROW][QUEENSIDE_HORSES_COLUMN] = 
-            new Knight(new Position(BLACK_BACK_ROW, QUEENSIDE_HORSES_COLUMN), Color.Black);
-        board[BLACK_BACK_ROW][KINGSIDE_HORSES_COLUMN] = 
-            new Knight(new Position(BLACK_BACK_ROW, KINGSIDE_HORSES_COLUMN), Color.Black);
-
-        board[WHITE_BACK_ROW][QUEENSIDE_HORSES_COLUMN] = 
-            new Knight(new Position(WHITE_BACK_ROW, QUEENSIDE_HORSES_COLUMN), Color.White);
-        board[WHITE_BACK_ROW][KINGSIDE_HORSES_COLUMN] = 
-            new Knight(new Position(WHITE_BACK_ROW, KINGSIDE_HORSES_COLUMN), Color.White);
-
-        // Queens
-        board[BLACK_BACK_ROW][QUEEN_COLUMN] = 
-            new Queen(new Position(BLACK_BACK_ROW, QUEEN_COLUMN), Color.Black);
-        board[WHITE_BACK_ROW][QUEEN_COLUMN] = 
-            new Queen(new Position(WHITE_BACK_ROW, QUEEN_COLUMN), Color.White);
-
-        // Kings
-        whiteKing = 
-            new King(new Position(WHITE_BACK_ROW, KING_COLUMN), Color.White);
-        blackKing = 
-            new King(new Position(BLACK_BACK_ROW, KING_COLUMN), Color.Black);
-
-        board[BLACK_BACK_ROW][KING_COLUMN] = this.blackKing;
-        board[WHITE_BACK_ROW][KING_COLUMN] = this.whiteKing;
+        for (int i = 0; i < 12; i++) {
+            var piece = PieceFactory.create(
+                null, 
+                null, 
+                turnColor); 
+        }
+ 
     }
 
     /*
@@ -185,13 +168,12 @@ public class Chessboard {
         int newR = targetPosition.getRow();
         int newC = targetPosition.getColumn();
 
-        Piece[][] newBoard = board.clone();
+        var newBoard = board.clone();
 
         newBoard[newR][newC] = piece;
         newBoard[r][c] = null;
         return board;
     }
-
 
     /**
      * Print the current state of the board.

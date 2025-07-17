@@ -1,6 +1,6 @@
 package chess.game;
 
-import java.util.List;
+import java.util.Set;
 
 public interface Piece {
 
@@ -16,5 +16,5 @@ public interface Piece {
     
     public void move(Position p, MoveContext moveContext);
 
-    public List<Position> generatePseudoLegalMoves(MoveContext moveContext);
+    public Set<Position> generatePseudoLegalMoves(MoveContext moveContext);
 }

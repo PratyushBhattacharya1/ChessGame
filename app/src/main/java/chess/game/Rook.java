@@ -1,7 +1,7 @@
 package chess.game;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Represents a {@code Rook} chess piece.
@@ -18,11 +18,13 @@ import java.util.List;
  */
 public class Rook extends SlidingPieces {
 
+    public static final int MAX_MOVES = 14;
+    public static final Title TITLE = Title.R;
+
     private boolean hasMoved = false;
 
     public Rook(Position position, Color color) {
         super(position, color);
-        this.title = Title.R;
     }
 
     @Override
@@ -40,8 +42,8 @@ public class Rook extends SlidingPieces {
     }
 
     @Override
-    public List<Position> generatePseudoLegalMoves(MoveContext mContext) {
-        List<Position> moves = new ArrayList<>();
+    public Set<Position> generatePseudoLegalMoves(MoveContext mContext) {
+        Set<Position> moves = new HashSet<>(MAX_MOVES);
         var board = mContext.getBoard();
 
         for (Direction dr : ORTHOGONALS) {

@@ -1,12 +1,15 @@
 package chess.game;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Represents a pawn chess piece.
  */
 public class Pawn extends PieceBehaviors {
+
+    public static final int MAX_MOVES = 4;
+    public static final Title TITLE = Title.P;
 
     private final int PAWN_ROW = (this.isWhite())? 6 : 1;
     private final int OPP_PAWN_ROW = (this.isWhite())? 1 : 6;
@@ -25,7 +28,6 @@ public class Pawn extends PieceBehaviors {
      */
     public Pawn(Position position, Color color) {
         super(position, color);
-        this.title = Title.P;
     }
 
     /**
@@ -100,8 +102,8 @@ public class Pawn extends PieceBehaviors {
     }
 
     @Override
-    public List<Position> generatePseudoLegalMoves(MoveContext mContext) {
-        List<Position> moves = new ArrayList<>();
+    public Set<Position> generatePseudoLegalMoves(MoveContext mContext) {
+        Set<Position> moves = new HashSet<>(MAX_MOVES);
 
         int dr = (this.isBlack())? 1 : -1, c = this.position.getColumn();
         int upOne = this.position.getRow() + dr;

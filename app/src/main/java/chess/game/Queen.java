@@ -1,7 +1,7 @@
 package chess.game;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Represents a {@code Queen} chess piece, which can move any number of squares along a rank, file, or diagonal.
@@ -16,6 +16,8 @@ import java.util.List;
  * @see Piece
  */
 public class Queen extends SlidingPieces {
+    public static final int MAX_MOVES = 27;
+    public static final Title TITLE = Title.Q;
 
     /**
      * Constructs a {@code Queen} chess piece with the specified position and color.
@@ -25,7 +27,6 @@ public class Queen extends SlidingPieces {
      */
     public Queen(Position position, Color color) {
         super(position, color);
-        this.title = Title.Q;
     }
 
     /**
@@ -49,8 +50,8 @@ public class Queen extends SlidingPieces {
     }
 
     @Override
-    public List<Position> generatePseudoLegalMoves(MoveContext mContext) {
-        List<Position> moves = new ArrayList<>();
+    public Set<Position> generatePseudoLegalMoves(MoveContext mContext) {
+        Set<Position> moves = new HashSet<>(MAX_MOVES);
         var board = mContext.getBoard();
 
         for (Direction direction : Direction.values()) {

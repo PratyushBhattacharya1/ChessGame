@@ -29,7 +29,7 @@ public abstract class PieceBehaviors implements Piece {
         public int getColDelta() {return this.dc;}
     }
 
-    protected static enum Title {
+    public static enum Title {
         R,
         N,
         B,
@@ -40,7 +40,8 @@ public abstract class PieceBehaviors implements Piece {
 
     Position position;
     final Color color;
-    Title title;
+    protected int MAX_MOVES;
+    protected Title TITLE;
 
     public PieceBehaviors(Position position, Color color) {
         this.position = new Position(position);
@@ -92,6 +93,6 @@ public abstract class PieceBehaviors implements Piece {
 
     @Override
     public String toString() {
-        return "" + (this.isWhite()? "W" : "B") + this.title;
+        return "" + (this.isWhite()? "W" : "B") + TITLE;
     }
 }

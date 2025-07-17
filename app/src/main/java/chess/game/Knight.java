@@ -1,7 +1,7 @@
 package chess.game;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Represents a {@code Knight} chess piece.
@@ -9,6 +9,9 @@ import java.util.List;
  * The {@code Knight} moves in an "L" shape: two squares in one direction and then one square perpendicular.
  */
 public class Knight extends PieceBehaviors {
+
+    public static final int MAX_MOVES = 8;
+    public static final Title TITLE = Title.N;
 
     /**
      * Constructs a {@code Knight} chess piece with the specified position and color.
@@ -18,7 +21,6 @@ public class Knight extends PieceBehaviors {
      */
     public Knight(Position position, Color color) {
         super(position, color);
-        this.title = Title.N;
     }
 
     /**
@@ -53,15 +55,10 @@ public class Knight extends PieceBehaviors {
 
         return true;
     }
-    
-    @Override
-    public String toString() {
-        return "" + (this.isWhite() ? "W" : "B") + (this.isWhite() ? "N" : "N");
-    }
 
     @Override
-    public List<Position> generatePseudoLegalMoves(MoveContext mContext) {
-        List<Position> moves = new ArrayList<>();
+    public Set<Position> generatePseudoLegalMoves(MoveContext mContext) {
+        Set<Position> moves = new HashSet<>(MAX_MOVES);
 
         for (int[] arr : generateHorsePositions(this.position.getRow(), this.position.getColumn())) {
             int row = arr[0];
