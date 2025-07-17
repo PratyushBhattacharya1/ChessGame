@@ -151,7 +151,9 @@ public class Chessboard {
         if (piece == null) return false;
         else if (this.turnColor != piece.getColor()) return false;
 
-        if (!piece.isPseudoLegalMove(targetPosition, board, this.turnCount)) {
+        MoveContext mContext = new MoveContext(this.turnCount, board);
+
+        if (!piece.isPseudoLegalMove(targetPosition, mContext)) {
             return false;
         }
 
@@ -170,7 +172,7 @@ public class Chessboard {
             else this.blackKing = (King) piece;
         }
 
-        piece.move(targetPosition);
+        piece.move(targetPosition, mContext);
         this.boardHistory.push(newBoard);
         this.endTurn();
 

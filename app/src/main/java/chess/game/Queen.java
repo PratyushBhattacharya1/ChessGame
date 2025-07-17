@@ -1,5 +1,6 @@
 package chess.game;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -24,6 +25,7 @@ public class Queen extends SlidingPieces {
      */
     public Queen(Position position, Color color) {
         super(position, color);
+        this.title = Title.Q;
     }
 
     /**
@@ -41,18 +43,23 @@ public class Queen extends SlidingPieces {
      * @return {@code true} if the move is valid for a Queen; {@code false} otherwise.
      */
     @Override
-    public boolean isPseudoLegalMove(Position targetPosition, Piece[][] board, int turnCount) {
+    public boolean isPseudoLegalMove(Position targetPosition, MoveContext mContext) {
+        var board = mContext.getBoard();
         return super.isValidRookMove(targetPosition, board) || super.isValidBishopMove(targetPosition, board);
-    }
-    
-    @Override
-    public String toString() {
-        return "" + (this.isWhite() ? "W" : "B") + (this.isWhite() ? "Q" : "Q");
     }
 
     @Override
-    public List<Position> generatePseudoLegalMoves(Piece[][] board) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'generatePseudoLegalMoves'");
+    public List<Position> generatePseudoLegalMoves(MoveContext mContext) {
+        List<Position> moves = new ArrayList<>();
+        var board = mContext.getBoard();
+
+        for (Direction direction : Direction.values()) {
+            this.processLine(direction.getRowDelta(), direction.getColDelta(), board, moves, (row, column, piece) -> {
+                if (piece == null) moves.add(new Position(row, column));
+                return moves;
+            });
+        }
+
+        return moves;
     }
 }

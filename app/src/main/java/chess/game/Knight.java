@@ -1,5 +1,6 @@
 package chess.game;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -17,6 +18,7 @@ public class Knight extends PieceBehaviors {
      */
     public Knight(Position position, Color color) {
         super(position, color);
+        this.title = Title.N;
     }
 
     /**
@@ -34,7 +36,7 @@ public class Knight extends PieceBehaviors {
      * @return {@code true} if the move is valid for a knight; {@code false} otherwise.
      */
     @Override
-    public boolean isPseudoLegalMove(Position targetPosition, Piece[][] board, int turnCount) {
+    public boolean isPseudoLegalMove(Position targetPosition, MoveContext mContext) {
         int r = this.position.getRow(),
             c = this.position.getColumn(),
             newR = targetPosition.getRow(),
@@ -42,6 +44,8 @@ public class Knight extends PieceBehaviors {
 
         int rowdiff = Math.abs(r - newR),
             coldiff = Math.abs(c - newC);
+
+        var board = mContext.getBoard();
 
         if (!((rowdiff == 2 && coldiff == 1) || (rowdiff == 1 && coldiff == 2))) return false;
 
@@ -56,13 +60,31 @@ public class Knight extends PieceBehaviors {
     }
 
     @Override
-    public List<Position> generatePseudoLegalMoves(Piece[][] board) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'generatePseudoLegalMoves'");
+    public List<Position> generatePseudoLegalMoves(MoveContext mContext) {
+        List<Position> moves = new ArrayList<>();
+
+        for (int[] arr : generateHorsePositions(this.position.getRow(), this.position.getColumn())) {
+            int row = arr[0];
+            int column = arr[1];
+            if (Position.isValidPosition(row, column) && mContext.getBoard()[row][column] == null) 
+                moves.add(new Position(row, column)); 
+        }
+
+        return moves;
     }
 
-    // @Override
-    // public void move(Position p) {
-    //     super.move(p);
-    // }
+    public static int[][] generateHorsePositions(int r, int c) {
+        if (!Position.isValidPosition(r, c)) throw new IllegalArgumentException("Arguments out of bounds");
+
+        return new int[][]{
+            {r + 2, c + 1},
+            {r + 2, c - 1},
+            {c + 2, r + 1},
+            {c + 2, r - 1},
+            {r - 2, c + 1},
+            {r - 2, c - 1},
+            {c - 2, r + 1},
+            {c - 2, r - 1}
+        };
+     }
 }

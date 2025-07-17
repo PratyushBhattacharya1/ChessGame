@@ -12,9 +12,9 @@ public interface Piece {
 
     public boolean isBlack();
 
-    public boolean isPseudoLegalMove(Position targetPosition, Piece board[][], int turnCount);
+    public boolean isPseudoLegalMove(Position targetPosition, MoveContext moveContext);
     
-    public void move(Position p);
+    public void move(Position p, MoveContext moveContext);
 
-    public List<Position> generatePseudoLegalMoves(Piece board[][]);
+    public List<Position> generatePseudoLegalMoves(MoveContext moveContext);
 }

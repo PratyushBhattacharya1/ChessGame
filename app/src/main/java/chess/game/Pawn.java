@@ -1,5 +1,6 @@
 package chess.game;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -24,6 +25,7 @@ public class Pawn extends PieceBehaviors {
      */
     public Pawn(Position position, Color color) {
         super(position, color);
+        this.title = Title.P;
     }
 
     /**
@@ -52,7 +54,7 @@ public class Pawn extends PieceBehaviors {
      * @param turnCount      the current turn count
      * @return {@code true} if the move is valid, {@code false} otherwise
      */
-    public boolean isPseudoLegalMove(Position targetPosition, Piece[][] board, int turnCount) {
+    public boolean isPseudoLegalMove(Position targetPosition, MoveContext mContext) {
         // Get position details
         int r = this.position.getRow(),
             c = this.position.getColumn(),
@@ -61,6 +63,9 @@ public class Pawn extends PieceBehaviors {
 
         int dr = (this.isBlack())? 1 : -1;
         int oneUp = r + dr, twoUp = oneUp + dr;
+
+        Piece[][] board = mContext.getBoard();
+        int turnCount = mContext.getTurnCount();
 
         // Handle initial two-square move
         if (r == this.PAWN_ROW && newR == twoUp && c == newC && board[oneUp][c] == null 
@@ -84,7 +89,6 @@ public class Pawn extends PieceBehaviors {
             && board[newR][newC] == null && board[r][newC] != null) {
 
             Piece piece = board[r][newC];
-            // Verify the adjacent piece is a pawn
             if (piece.getColor() != this.color && piece instanceof Pawn) {
                 // Allow en passant if same turn
                 if (((Pawn)piece).getEnPassantTurn() - ((this.isBlack())? 0 : 1) == turnCount) return true;
@@ -96,35 +100,27 @@ public class Pawn extends PieceBehaviors {
     }
 
     @Override
-    public String toString() {
-        return (this.isWhite() ? "W" : "B") + (this.isWhite() ? "P" : "P");
+    public List<Position> generatePseudoLegalMoves(MoveContext mContext) {
+        List<Position> moves = new ArrayList<>();
+
+        int dr = (this.isBlack())? 1 : -1, c = this.position.getColumn();
+        int upOne = this.position.getRow() + dr;
+
+        Position oneUp = new Position(this.position.getRow() + dr, c);
+        Position twoUp = new Position(upOne + dr, c);
+        Position oneLeft = new Position(oneUp);
+        Position oneRight = new Position(oneUp);
+        if (this.isPseudoLegalMove(oneUp, mContext)) moves.add(oneUp);
+        if (this.isPseudoLegalMove(twoUp, mContext)) moves.add(twoUp);
+        if (this.isPseudoLegalMove(oneLeft, mContext)) moves.add(oneLeft);
+        if (this.isPseudoLegalMove(oneRight, mContext)) moves.add(oneRight);
+
+        return moves;
     }
 
     @Override
-    public List<Position> generatePseudoLegalMoves(Piece[][] board) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'generatePseudoLegalMoves'");
+    public void move(Position p, MoveContext mContext) {
+        super.move(p, mContext);
+        this.enPassantTurn = mContext.getTurnCount();
     }
-
-    // public boolean isPushingTwoSquares(Position targetPosition, Piece[][] board) {
-    //     // Get position details
-    //     int r = this.position.getRow(),
-    //         c = this.position.getColumn(),
-    //         newR = targetPosition.getRow(),
-    //         newC = targetPosition.getColumn();
-
-
-    //     // Handle initial two-square move
-    //     if (this.isBlack() && r == BLACK_PAWN_ROW && newR == BLACK_TWO_SQUARES_UP && c == newC 
-    //         && board[BLACK_ONE_SQUARE_UP][c] == null && board[BLACK_TWO_SQUARES_UP][c] == null) {
-    //         return true;
-    //     }
-    //     if (this.isWhite() && r == WHITE_PAWN_ROW && newR == WHITE_TWO_SQUARES_UP && c == newC 
-    //         && board[WHITE_ONE_SQUARE_UP][c] == null && board[WHITE_TWO_SQUARES_UP][c] == null) {
-    //         return true;
-    //     }
-
-
-    //     return false;
-    // }
 }

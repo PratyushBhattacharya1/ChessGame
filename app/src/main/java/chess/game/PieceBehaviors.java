@@ -15,23 +15,32 @@ public abstract class PieceBehaviors implements Piece {
         private final int dr; // Row delta
         private final int dc; // Column delta
 
-        private final int[] dir;
+        // private final int[] dir;
 
         Direction(int dr, int dc) {
             this.dr = dr;
             this.dc = dc;
-            this.dir = new int[] {dr, dc};
+            // this.dir = new int[] {dr, dc};
         }
 
-        public int[] getDirection() {return this.dir;}
+        // public int[] getDirection() {return this.dir;}
 
         public int getRowDelta() {return this.dr;}
-
         public int getColDelta() {return this.dc;}
     }
 
+    protected static enum Title {
+        R,
+        N,
+        B,
+        Q,
+        K,
+        P
+    }
+
     Position position;
-    Color color;
+    final Color color;
+    Title title;
 
     public PieceBehaviors(Position position, Color color) {
         this.position = new Position(position);
@@ -54,11 +63,11 @@ public abstract class PieceBehaviors implements Piece {
         return this.color == Color.Black;
     }
 
-    public void move(Position p) {
+    public void move(Position p, MoveContext moveContext) {
         this.position.setPosition(p);
     }
 
-    protected <T> T processLine(int dr, 
+    public <T> T processLine(   int dr, 
                                 int dc, 
                                 Piece[][] board, 
                                 T initialValue, 
@@ -79,5 +88,10 @@ public abstract class PieceBehaviors implements Piece {
             c += dc;
         }
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "" + (this.isWhite()? "W" : "B") + this.title;
     }
 }

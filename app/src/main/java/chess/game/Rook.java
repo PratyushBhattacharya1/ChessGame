@@ -1,5 +1,6 @@
 package chess.game;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -21,31 +22,36 @@ public class Rook extends SlidingPieces {
 
     public Rook(Position position, Color color) {
         super(position, color);
+        this.title = Title.R;
     }
 
     @Override
-    public boolean isPseudoLegalMove(Position targetPosition, Piece[][] board, int turnCount) {
-        return super.isValidRookMove(targetPosition, board);
+    public boolean isPseudoLegalMove(Position targetPosition, MoveContext mContext) {
+        return super.isValidRookMove(targetPosition, mContext.getBoard());
     }
 
     public boolean hasMoved() {
         return hasMoved;
     }
 
-    public void move(Position p) {
-        super.move(p);
+    public void move(Position p, MoveContext mContext) {
+        super.move(p, mContext);
         hasMoved = true;
     }
 
     @Override
-    public String toString() {
-        return "" + (this.isWhite() ? "W" : "B") + (this.isWhite() ? "R" : "R");
-    }
+    public List<Position> generatePseudoLegalMoves(MoveContext mContext) {
+        List<Position> moves = new ArrayList<>();
+        var board = mContext.getBoard();
 
-    @Override
-    public List<Position> generatePseudoLegalMoves(Piece[][] board) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'generatePseudoLegalMoves'");
+        for (Direction dr : ORTHOGONALS) {
+            this.processLine(dr.getRowDelta(), dr.getColDelta(), board, moves, (row, column, piece) -> {
+                if (piece == null) moves.add(new Position(row, column));
+                return moves;
+            });
+        }
+
+        return moves;
     }
     
 }

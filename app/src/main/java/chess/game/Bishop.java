@@ -1,5 +1,6 @@
 package chess.game;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -21,6 +22,7 @@ public class Bishop extends SlidingPieces {
      */
     public Bishop(Position position, Color color) {
         super(position, color);
+        this.title = Title.B;
     }
 
     /**
@@ -32,18 +34,27 @@ public class Bishop extends SlidingPieces {
      * @return {@code true} if the move is a valid bishop move according to chess rules; false otherwise.
      */
     @Override
-    public boolean isPseudoLegalMove(Position targetPosition, Piece[][] board, int turnCount) {
-        return super.isValidBishopMove(targetPosition, board);
+    public boolean isPseudoLegalMove(Position targetPosition, MoveContext mContext) {
+        return super.isValidBishopMove(targetPosition, mContext.getBoard());
     }
 
     @Override
     public String toString() {
-        return "" + (this.isWhite() ? "W" : "B") + (this.isWhite() ? "B" : "B");
+        return "" + (this.isWhite() ? "W" : "B") + "B";
     }
 
     @Override
-    public List<Position> generatePseudoLegalMoves(Piece[][] board) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'generatePseudoLegalMoves'");
+    public List<Position> generatePseudoLegalMoves(MoveContext mContext) {
+        List<Position> moves = new ArrayList<>();
+        var board = mContext.getBoard();
+
+        for (Direction dr : DIAGONALS) {
+            this.processLine(dr.getRowDelta(), dr.getColDelta(), board, moves, (row, column, piece) -> {
+                if (piece == null) moves.add(new Position(row, column));
+                return moves;
+            });
+        }
+
+        return moves;
     }
 }

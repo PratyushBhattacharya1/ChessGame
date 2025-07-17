@@ -14,18 +14,21 @@ public class King extends SlidingPieces {
 
     public King(Position position, Color color) {
         super(position, color);
+        this.title = Title.K;
     }
 
     @Override
-    public boolean isPseudoLegalMove(Position targetPosition, Piece[][] board, int turnCount) {
+    public boolean isPseudoLegalMove(Position targetPosition, MoveContext mContext) {
         int r = this.position.getRow(),
             c = this.position.getColumn(),
             newR = targetPosition.getRow(),
             newC = targetPosition.getColumn();
 
+        var board = mContext.getBoard();
+
         if (this.canCastle(targetPosition, board)) return true;
 
-        // Return false if invalid pseudolegal king move 
+        // Return false if invalid pseudo legal king move 
         if (!(Math.abs(r - newR) == 1 || Math.abs(c - newC) == 1) || (r == newR && c == newC) 
             || board[newR][newC] != null && board[newR][newC].getColor() == this.color)
             return false;
@@ -94,16 +97,7 @@ public class King extends SlidingPieces {
         }
 
         // All 8 possible horse positions
-        int[][] horsePositions = {
-            {r + 2, c + 1},
-            {r + 2, c - 1},
-            {c + 2, r + 1},
-            {c + 2, r - 1},
-            {r - 2, c + 1},
-            {r - 2, c - 1},
-            {c - 2, r + 1},
-            {c - 2, r - 1}
-        };
+        int[][] horsePositions = Knight.generateHorsePositions(r, c);
 
         // Check every legal horse position for an oppsosite colroed knight
         for (int[] hp : horsePositions) {
@@ -148,18 +142,14 @@ public class King extends SlidingPieces {
         return false;
     }
 
-    public void move(Position position) {
-        super.move(position);
+    @Override
+    public void move(Position position, MoveContext mContext) {
+        super.move(position, mContext);
         this.hasMoved = true;
     }
 
     @Override
-    public String toString() {
-        return "" + (this.isWhite() ? "W" : "B") + (this.isWhite() ? "K" : "K");
-    }
-
-    @Override
-    public List<Position> generatePseudoLegalMoves(Piece[][] board) {
+    public List<Position> generatePseudoLegalMoves(MoveContext mContext) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'generatePseudoLegalMoves'");
     }
