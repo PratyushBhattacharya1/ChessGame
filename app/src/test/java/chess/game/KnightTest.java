@@ -15,8 +15,8 @@ public class KnightTest {
                 int rowdiff = Math.abs(4 - i),
                 coldiff = Math.abs(4 - j);
 
-                if (!((rowdiff == 2 && coldiff == 1) || (rowdiff == 1 && coldiff == 2))) assertFalse(knight.isValidMove(new Position(i, j), board, 0));
-                else assertTrue(knight.isValidMove(new Position(i, j), board, 0));  
+                if (!((rowdiff == 2 && coldiff == 1) || (rowdiff == 1 && coldiff == 2))) assertFalse(knight.isPseudoLegalMove(new Position(i, j), board, 0));
+                else assertTrue(knight.isPseudoLegalMove(new Position(i, j), board, 0));  
             }
         }
     }
@@ -26,7 +26,7 @@ public class KnightTest {
         // Place own piece at target
         board[6][5] = new DummyPiece(new Position(6, 5), Color.White);
 
-        assertFalse(knight.isValidMove(new Position(6, 5), board, 0));
+        assertFalse(knight.isPseudoLegalMove(new Position(6, 5), board, 0));
     }
 
     @Test
@@ -34,6 +34,6 @@ public class KnightTest {
         // Place opponent's piece at target
         board[6][5] = new DummyPiece(new Position(6, 5), Color.Black);
 
-        assertTrue(knight.isValidMove(new Position(6, 5), board, 0));
+        assertTrue(knight.isPseudoLegalMove(new Position(6, 5), board, 0));
     }
 }

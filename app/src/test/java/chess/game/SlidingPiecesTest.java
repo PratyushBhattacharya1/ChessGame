@@ -3,20 +3,26 @@ package chess.game;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 
 public class SlidingPiecesTest {
 
     // Concrete subclass for testing
-    static class TestSlidingPiece extends SlidingPieces implements Piece {
+    static class TestSlidingPiece extends SlidingPieces {
         public TestSlidingPiece(Position position, Color color) {
             super(position, color);
         }
 
         @Override
-        public boolean isValidMove(Position targetPosition, Piece[][] board, int turnCount) {
-            // TODO Auto-generated method stub
+        public boolean isPseudoLegalMove(Position targetPosition, Piece[][] board, int turnCount) {
             throw new UnsupportedOperationException("Unimplemented method 'isValidMove'");
+        }
+
+        @Override
+        public List<Position> generatePseudoLegalMoves(Piece[][] board) {
+            throw new UnsupportedOperationException("Unimplemented method 'generatePseudoLegalMoves'");
         }
     }
 
@@ -64,15 +70,20 @@ public class SlidingPiecesTest {
 
     @Test
     public void testValidRookCapture() {
-        board[3][4] = new DummyPiece(new Position(3, 4), Color.Black); // Obstruction
-        board[3][2] = new DummyPiece(new Position(3, 2), Color.Black); // Obstruction
-        board[4][3] = new DummyPiece(new Position(4, 3), Color.Black); // Obstruction
-        board[2][3] = new DummyPiece(new Position(2, 3), Color.Black); // Obstruction
+        Position p34 = new Position(3, 4);
+        Position p32 = new Position(3, 2);
+        Position p43 = new Position(4, 3);
+        Position p23 = new Position(2, 3);
 
-        assertTrue(whiteRook.isValidRookMove(new Position(3, 4), board));
-        assertTrue(whiteRook.isValidRookMove(new Position(3, 2), board));
-        assertTrue(whiteRook.isValidRookMove(new Position(4, 3), board));
-        assertTrue(whiteRook.isValidRookMove(new Position(2, 3), board));
+        board[3][4] = new DummyPiece(p34, Color.Black); // Obstruction
+        board[3][2] = new DummyPiece(p32, Color.Black); // Obstruction
+        board[4][3] = new DummyPiece(p43, Color.Black); // Obstruction
+        board[2][3] = new DummyPiece(p23, Color.Black); // Obstruction
+
+        assertTrue(whiteRook.isValidRookMove(p34, board));
+        assertTrue(whiteRook.isValidRookMove(p32, board));
+        assertTrue(whiteRook.isValidRookMove(p43, board));
+        assertTrue(whiteRook.isValidRookMove(p23, board));
     }
 
     @Test
@@ -87,10 +98,14 @@ public class SlidingPiecesTest {
 
     @Test
     public void testInvalidBishopMoveObstructed() {
-        board[3][6] = new DummyPiece(new Position(3, 6), Color.Black); // Obstruction on the diagonal
-        board[3][4] = new DummyPiece(new Position(3, 4), Color.Black); // Obstruction on the diagonal
-        board[5][6] = new DummyPiece(new Position(5, 6), Color.Black); // Obstruction on the diagonal
-        board[5][4] = new DummyPiece(new Position(5, 4), Color.Black); // Obstruction on the diagonal
+        board[3][6] = 
+        new DummyPiece(new Position(3, 6), Color.Black); // Obstruction on the diagonal
+        board[3][4] = 
+        new DummyPiece(new Position(3, 4), Color.Black); // Obstruction on the diagonal
+        board[5][6] = 
+        new DummyPiece(new Position(5, 6), Color.Black); // Obstruction on the diagonal
+        board[5][4] = 
+        new DummyPiece(new Position(5, 4), Color.Black); // Obstruction on the diagonal
 
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {

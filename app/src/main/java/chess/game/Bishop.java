@@ -1,5 +1,7 @@
 package chess.game;
 
+import java.util.List;
+
 /**
  * Represents a {@code Bishop} chess piece.
  * <p>
@@ -9,7 +11,7 @@ package chess.game;
  *
  * @author Pratyush
  */
-public class Bishop extends SlidingPieces implements Piece {
+public class Bishop extends SlidingPieces {
 
     /**
      * Constructs a Bishop chess piece with the specified position and color.
@@ -30,12 +32,18 @@ public class Bishop extends SlidingPieces implements Piece {
      * @return {@code true} if the move is a valid bishop move according to chess rules; false otherwise.
      */
     @Override
-    public boolean isValidMove(Position targetPosition, Piece[][] board, int turnCount) {
+    public boolean isPseudoLegalMove(Position targetPosition, Piece[][] board, int turnCount) {
         return super.isValidBishopMove(targetPosition, board);
     }
 
     @Override
     public String toString() {
         return "" + (this.isWhite() ? "W" : "B") + (this.isWhite() ? "B" : "B");
+    }
+
+    @Override
+    public List<Position> generatePseudoLegalMoves(Piece[][] board) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'generatePseudoLegalMoves'");
     }
 }

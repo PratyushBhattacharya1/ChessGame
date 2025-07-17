@@ -1,16 +1,15 @@
 package chess.game;
 
+import java.util.List;
+
 /**
  * Represents a pawn chess piece.
  */
-public class Pawn extends PiecesActs implements Piece {
+public class Pawn extends PieceBehaviors {
 
-    private static final int BLACK_ONE_SQUARE_UP = 2;
-    private static final int WHITE_ONE_SQUARE_UP = 5;
-    private static final int BLACK_TWO_SQUARES_UP = 3;
-    private static final int WHITE_TWO_SQUARES_UP = 4;
-    private static final int BLACK_PAWN_ROW = 1;
-    private static final int WHITE_PAWN_ROW = 6;
+    private final int PAWN_ROW = (this.isWhite())? 6 : 1;
+    private final int OPP_PAWN_ROW = (this.isWhite())? 1 : 6;
+    
     public static final int DEFAULT_EN_PASSANT_TURN_VALUE = 0;
     /**
      * The turn count when this pawn can perform an en passant capture.
@@ -53,60 +52,44 @@ public class Pawn extends PiecesActs implements Piece {
      * @param turnCount      the current turn count
      * @return {@code true} if the move is valid, {@code false} otherwise
      */
-    public boolean isValidMove(Position targetPosition, Piece[][] board, int turnCount) {
+    public boolean isPseudoLegalMove(Position targetPosition, Piece[][] board, int turnCount) {
         // Get position details
         int r = this.position.getRow(),
             c = this.position.getColumn(),
             newR = targetPosition.getRow(),
             newC = targetPosition.getColumn();
 
+        int dr = (this.isBlack())? 1 : -1;
+        int oneUp = r + dr, twoUp = oneUp + dr;
+
         // Handle initial two-square move
-        if (this.isBlack() && r == BLACK_PAWN_ROW && newR == BLACK_TWO_SQUARES_UP && c == newC 
-            && board[BLACK_ONE_SQUARE_UP][c] == null && board[BLACK_TWO_SQUARES_UP][c] == null) {
-            return true;
-        }
-        if (this.isWhite() && r == WHITE_PAWN_ROW && newR == WHITE_TWO_SQUARES_UP && c == newC 
-            && board[WHITE_ONE_SQUARE_UP][c] == null && board[WHITE_TWO_SQUARES_UP][c] == null) {
-            return true;
-        }
+        if (r == this.PAWN_ROW && newR == twoUp && c == newC && board[oneUp][c] == null 
+            && board[twoUp][c] == null) 
+                return true;
 
 
         // Handle single square move
-        if (this.isBlack() && newR == r + 1 && c == newC && board[newR][c] == null) return true;
-        if (this.isWhite() && newR == r - 1 && c == newC && board[newR][c] == null) return true;
+        if (newR == oneUp && c == newC && board[newR][c] == null) return true;
 
         // Handle diagonal capture
-        if (this.isBlack() && newR == r + 1 && Math.abs(newC - c) == 1 
-            && board[newR][newC] != null && board[newR][newC].getColor() != this.color) 
-                return true;
-        if (this.isWhite() && newR == r - 1 
-            && Math.abs(newC - c) == 1 && board[newR][newC] != null 
+        if (newR == oneUp && Math.abs(newC - c) == 1 && board[newR][newC] != null 
             && board[newR][newC].getColor() != this.color) 
                 return true;
 
 
-        // Handle enPassent
-        // If very specific conditions for en passant for black have been met
-        if (this.isBlack() && r == WHITE_TWO_SQUARES_UP && newR == WHITE_ONE_SQUARE_UP 
-            && Math.abs(newC - c) == 1 && board[newR][newC] == null && board[r][newC] != null) {
+        int oppOnePawn = OPP_PAWN_ROW - dr, oppTwoPawn = oppOnePawn + dr;
+
+        // Handle en passant if very specific conditions are met
+        if (r == oppTwoPawn && newR == oppOnePawn && Math.abs(newC - c) == 1 
+            && board[newR][newC] == null && board[r][newC] != null) {
 
             Piece piece = board[r][newC];
             // Verify the adjacent piece is a pawn
-            if (piece instanceof Pawn) {
-                Pawn pawn = (Pawn) piece;
-                // Allow enPassent if black is performing en passant on the same turn as white
-                if (pawn.getEnPassantTurn() == turnCount) return true;
+            if (piece.getColor() != this.color && piece instanceof Pawn) {
+                // Allow en passant if same turn
+                if (((Pawn)piece).getEnPassantTurn() - ((this.isBlack())? 0 : 1) == turnCount) return true;
             }
-        } else if (this.isWhite() && r == BLACK_TWO_SQUARES_UP && newR == BLACK_ONE_SQUARE_UP 
-            && Math.abs(newC - c) == 1 && board[newR][newC] == null && board[r][newC] != null) {
-
-            Piece piece = board[r][newC];
-            if (piece instanceof Pawn) {
-                Pawn pawn = (Pawn) piece;
-                // Same logic except allow white to do en passant only if the black pawn pushed two squares one turn ago
-                if (pawn.getEnPassantTurn() - 1 == turnCount) return true;
-            }
-        } 
+        }
 
         // If none of the conditions are met, the move is invalid
         return false;
@@ -117,25 +100,31 @@ public class Pawn extends PiecesActs implements Piece {
         return (this.isWhite() ? "W" : "B") + (this.isWhite() ? "P" : "P");
     }
 
-    public boolean isPushingTwoSquares(Position targetPosition, Piece[][] board) {
-        // Get position details
-        int r = this.position.getRow(),
-            c = this.position.getColumn(),
-            newR = targetPosition.getRow(),
-            newC = targetPosition.getColumn();
-
-
-        // Handle initial two-square move
-        if (this.isBlack() && r == BLACK_PAWN_ROW && newR == BLACK_TWO_SQUARES_UP && c == newC 
-            && board[BLACK_ONE_SQUARE_UP][c] == null && board[BLACK_TWO_SQUARES_UP][c] == null) {
-            return true;
-        }
-        if (this.isWhite() && r == WHITE_PAWN_ROW && newR == WHITE_TWO_SQUARES_UP && c == newC 
-            && board[WHITE_ONE_SQUARE_UP][c] == null && board[WHITE_TWO_SQUARES_UP][c] == null) {
-            return true;
-        }
-
-
-        return false;
+    @Override
+    public List<Position> generatePseudoLegalMoves(Piece[][] board) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'generatePseudoLegalMoves'");
     }
+
+    // public boolean isPushingTwoSquares(Position targetPosition, Piece[][] board) {
+    //     // Get position details
+    //     int r = this.position.getRow(),
+    //         c = this.position.getColumn(),
+    //         newR = targetPosition.getRow(),
+    //         newC = targetPosition.getColumn();
+
+
+    //     // Handle initial two-square move
+    //     if (this.isBlack() && r == BLACK_PAWN_ROW && newR == BLACK_TWO_SQUARES_UP && c == newC 
+    //         && board[BLACK_ONE_SQUARE_UP][c] == null && board[BLACK_TWO_SQUARES_UP][c] == null) {
+    //         return true;
+    //     }
+    //     if (this.isWhite() && r == WHITE_PAWN_ROW && newR == WHITE_TWO_SQUARES_UP && c == newC 
+    //         && board[WHITE_ONE_SQUARE_UP][c] == null && board[WHITE_TWO_SQUARES_UP][c] == null) {
+    //         return true;
+    //     }
+
+
+    //     return false;
+    // }
 }

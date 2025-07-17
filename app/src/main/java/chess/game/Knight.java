@@ -1,11 +1,13 @@
 package chess.game;
 
+import java.util.List;
+
 /**
  * Represents a {@code Knight} chess piece.
- * Inherits common piece actions from {@link PiecesActs} and implements the {@link Piece} interface.
+ * Inherits common piece actions from {@link PieceBehaviors} and implements the {@link Piece} interface.
  * The {@code Knight} moves in an "L" shape: two squares in one direction and then one square perpendicular.
  */
-public class Knight extends PiecesActs implements Piece {
+public class Knight extends PieceBehaviors {
 
     /**
      * Constructs a {@code Knight} chess piece with the specified position and color.
@@ -32,7 +34,7 @@ public class Knight extends PiecesActs implements Piece {
      * @return {@code true} if the move is valid for a knight; {@code false} otherwise.
      */
     @Override
-    public boolean isValidMove(Position targetPosition, Piece[][] board, int turnCount) {
+    public boolean isPseudoLegalMove(Position targetPosition, Piece[][] board, int turnCount) {
         int r = this.position.getRow(),
             c = this.position.getColumn(),
             newR = targetPosition.getRow(),
@@ -51,6 +53,12 @@ public class Knight extends PiecesActs implements Piece {
     @Override
     public String toString() {
         return "" + (this.isWhite() ? "W" : "B") + (this.isWhite() ? "N" : "N");
+    }
+
+    @Override
+    public List<Position> generatePseudoLegalMoves(Piece[][] board) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'generatePseudoLegalMoves'");
     }
 
     // @Override

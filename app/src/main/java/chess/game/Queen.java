@@ -1,4 +1,7 @@
 package chess.game;
+
+import java.util.List;
+
 /**
  * Represents a {@code Queen} chess piece, which can move any number of squares along a rank, file, or diagonal.
  * Inherits movement logic from {@code SlidingPieces} for rook and bishop moves.
@@ -11,7 +14,7 @@ package chess.game;
  * @see SlidingPieces
  * @see Piece
  */
-public class Queen extends SlidingPieces implements Piece {
+public class Queen extends SlidingPieces {
 
     /**
      * Constructs a {@code Queen} chess piece with the specified position and color.
@@ -38,12 +41,18 @@ public class Queen extends SlidingPieces implements Piece {
      * @return {@code true} if the move is valid for a Queen; {@code false} otherwise.
      */
     @Override
-    public boolean isValidMove(Position targetPosition, Piece[][] board, int turnCount) {
+    public boolean isPseudoLegalMove(Position targetPosition, Piece[][] board, int turnCount) {
         return super.isValidRookMove(targetPosition, board) || super.isValidBishopMove(targetPosition, board);
     }
     
     @Override
     public String toString() {
         return "" + (this.isWhite() ? "W" : "B") + (this.isWhite() ? "Q" : "Q");
+    }
+
+    @Override
+    public List<Position> generatePseudoLegalMoves(Piece[][] board) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'generatePseudoLegalMoves'");
     }
 }

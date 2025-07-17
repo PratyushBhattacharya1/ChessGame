@@ -1,5 +1,7 @@
 package chess.game;
 
+import java.util.List;
+
 /**
  * Represents a {@code Rook} chess piece.
  * <p>
@@ -13,7 +15,7 @@ package chess.game;
  *
  * @author Pratyush
  */
-public class Rook extends SlidingPieces implements Piece {
+public class Rook extends SlidingPieces {
 
     private boolean hasMoved = false;
 
@@ -22,7 +24,7 @@ public class Rook extends SlidingPieces implements Piece {
     }
 
     @Override
-    public boolean isValidMove(Position targetPosition, Piece[][] board, int turnCount) {
+    public boolean isPseudoLegalMove(Position targetPosition, Piece[][] board, int turnCount) {
         return super.isValidRookMove(targetPosition, board);
     }
 
@@ -38,6 +40,12 @@ public class Rook extends SlidingPieces implements Piece {
     @Override
     public String toString() {
         return "" + (this.isWhite() ? "W" : "B") + (this.isWhite() ? "R" : "R");
+    }
+
+    @Override
+    public List<Position> generatePseudoLegalMoves(Piece[][] board) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'generatePseudoLegalMoves'");
     }
     
 }

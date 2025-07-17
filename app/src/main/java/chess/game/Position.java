@@ -22,6 +22,7 @@ package chess.game;
  * </ul>
  */
 public class Position {
+    private static final int MAX_STRING_LENGTH = 2;
     private int row, column;
 
     /**
@@ -45,11 +46,11 @@ public class Position {
      * Creates a new {@code Position} object by copying the row and column values from the given {@code Position} instance.
      * Throws an {@code IllegalArgumentException} if the provided position is out of bounds.
      *
-     * @param p the {@code Position} object to copy
-     * @throws IllegalArgumentException if the position specified by {@code p} is not valid
+     * @param position the {@code Position} object to copy
+     * @throws IllegalArgumentException if the position specified by {@code position} is not valid
      */
-    public Position(Position p) { 
-        this(p.getRow(), p.getColumn());
+    public Position(Position position) { 
+        this(position.getRow(), position.getColumn());
     }
 
     /**
@@ -121,64 +122,31 @@ public class Position {
         return (row < 8 && row >= 0 && column < 8 && column >= 0);
     }
 
+    // TODO: Tests and proper documentation.
+    public static boolean isValidRowOrColumn(int column) {
+        return (column < 8 && column >= 0);
+    }
+
     /**
      * Converts a chessboard rank character ('1' to '8') to the corresponding row index (0 to 7)
      * used in a 2D array representation of the board, where row 0 is the top (rank '8')
      * and row 7 is the bottom (rank '1').
      *
      * @param rank the rank character ('1' to '8')
-     * @return the corresponding row index (0 for '8', 7 for '1'), or -1 if the input is invalid
+     * @return the corresponding row index (0 for '8', 7 for '1')
      */
     public static int rankToRow(char rank) {
-        switch (rank) {
-            case '1':
-                return 7;
-            case '2':
-                return 6;
-            case '3':
-                return 5;
-            case '4':
-                return 4;
-            case '5':
-                return 3;
-            case '6':
-                return 2;
-            case '7':
-                return 1;
-            case '8':
-                return 0;
-            default:
-                return -1;
-        }
+        return Math.abs(rank - '0' - 8);
     }
 
     /**
      * Converts a chessboard file character ('a' through 'h') to its corresponding column index (0-7).
      *
      * @param file the file character ('a' to 'h') representing the column on a chessboard
-     * @return the zero-based column index (0 for 'a', 7 for 'h'), or -1 if the input is invalid
+     * @return the zero-based column index (0 for 'a', 7 for 'h')
      */
     public static int fileToColumn(char file) {
-        switch (file) {
-            case 'h':
-                return 7;
-            case 'g':
-                return 6;
-            case 'f':
-                return 5;
-            case 'e':
-                return 4;
-            case 'd':
-                return 3;
-            case 'c':
-                return 2;
-            case 'b':
-                return 1;
-            case 'a':
-                return 0;
-            default:
-                return -1;
-        }
+        return file - 'a';
     }
 
     /**
@@ -189,7 +157,7 @@ public class Position {
      * @throws IllegalArgumentException if the input string is not exactly two characters long
      */
     public static Position stringToPosition(String s) {
-        if (s.length() != 2) throw new IllegalArgumentException("Input string isn't two characters.");
+        if (s.length() != MAX_STRING_LENGTH) throw new IllegalArgumentException("Input string isn't two characters.");
         
         int row = Position.rankToRow(s.charAt(1));
         int column = Position.fileToColumn(s.charAt(0));

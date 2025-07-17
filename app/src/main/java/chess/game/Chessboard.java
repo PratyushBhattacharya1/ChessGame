@@ -151,7 +151,7 @@ public class Chessboard {
         if (piece == null) return false;
         else if (this.turnColor != piece.getColor()) return false;
 
-        if (!piece.isValidMove(targetPosition, board, this.turnCount)) {
+        if (!piece.isPseudoLegalMove(targetPosition, board, this.turnCount)) {
             return false;
         }
 

@@ -26,7 +26,7 @@ final class DummyPiece implements Piece {
         }
         
         @Override
-        public boolean isValidMove(Position targetPosition, Piece[][] board, int turnCount) {
+        public boolean isPseudoLegalMove(Position targetPosition, Piece[][] board, int turnCount) {
             // TODO Auto-generated method stub
             throw new UnsupportedOperationException("Unimplemented method 'isValidMove'");
         }

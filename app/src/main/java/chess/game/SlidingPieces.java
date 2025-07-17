@@ -1,16 +1,27 @@
 package chess.game;
 
+import java.util.EnumSet;
+
 /**
  * Abstract class representing chess pieces that move by sliding across the board,
  * such as rooks, bishops, and queens. Provides utility methods to validate
  * rook-like and bishop-like moves, ensuring that the path between the current
  * position and the target position is unobstructed.
  *
- * <p>Extends {@link PiecesActs} to inherit common piece behavior.</p>
+ * <p>Extends {@link PieceBehaviors} to inherit common piece behavior.</p>
  *
  * @author Pratyush
  */
-public abstract class SlidingPieces extends PiecesActs {
+public abstract class SlidingPieces extends PieceBehaviors {
+
+    protected static final EnumSet<Direction> DIAGONALS = EnumSet.of(
+        Direction.UP_LEFT, Direction.UP_RIGHT,
+        Direction.DOWN_LEFT, Direction.DOWN_RIGHT
+    );
+
+    protected static final EnumSet<Direction> ORTHOGONALS = EnumSet.of(
+        Direction.UP, Direction.DOWN, Direction.LEFT, Direction.RIGHT
+    );
 
     /**
      * Constructs a new SlidingPieces object with the specified position and color.
@@ -34,35 +45,27 @@ public abstract class SlidingPieces extends PiecesActs {
      * @return {@code true} if the move is valid for a rook (clear path and correct direction), {@code false} otherwise
      */
     protected boolean isValidRookMove(Position targetPosition, Piece board[][]) {
-        // Get position details
         int r = this.position.getRow(), 
             c = this.position.getColumn(), 
             newR = targetPosition.getRow(), 
             newC = targetPosition.getColumn();
 
-        // If either the column XOR row is unchanged
         if (!(r == newR ^ c == newC)) return false;
         
-        // Target position cannot be the same color
-        if (board[newR][newC] != null && board[newR][newC].getColor() == this.color) return false;
+        if (this.isPositionPieceSameColor(board, newR, newC)) return false;
 
-        int rowStep = 0;
-        int colStep = 0;
-
-        if (r == newR) {
-            rowStep = 0;
-            colStep = (newC > c) ? 1 : -1;
-        } else if (c == newC) {
-            rowStep = (newR > r) ? 1 : -1;
-            colStep = 0;
-        }
-        int steps = (r == newR) ? Math.abs(newC - c) : Math.abs(newR - r);
-
-        for (int i = 1; i < steps; i++) {
-            if (board[r + i * rowStep][c + i * colStep] != null) return false;
+        for (Direction dir : ORTHOGONALS) {
+            if (this.processLine(dir.getRowDelta(), dir.getColDelta(), board, false, (row, column, piece) -> 
+                piece != null && newR != row && newC != column && piece.getColor() == this.color
+            )) return false;
         }
 
         return true;
+    }
+
+    // Target position cannot be the same color
+    private boolean isPositionPieceSameColor(Piece[][] board, int newR, int newC) {
+        return board[newR][newC] != null && board[newR][newC].getColor() == this.color;
     }
 
     /**
@@ -75,7 +78,6 @@ public abstract class SlidingPieces extends PiecesActs {
      * @return {@code true} if the move is a valid bishop move (diagonal and unobstructed), {@code false} otherwise.
      */
     protected boolean isValidBishopMove(Position targetPosition, Piece board[][]) {
-        // Get position details
         int r = this.position.getRow(), 
             c = this.position.getColumn(), 
             newR = targetPosition.getRow(), 
@@ -84,14 +86,13 @@ public abstract class SlidingPieces extends PiecesActs {
         // Absolute value difference between tiles must be equal to each other
         if (Math.abs(r - newR) != Math.abs(c - newC) || targetPosition.equals(this.position)) return false;
 
-        int rowStep = (newR > r) ? 1 : -1;
-        int colStep = (newC > c) ? 1 : -1;
-        int steps = Math.abs(newR - r);
-        for (int i = 1; i < steps; i++) {
-            if (board[r + i * rowStep][c + i * colStep] != null) return false;
-        }
+        if (this.isPositionPieceSameColor(board, newR, newC)) return false;
 
-        if (board[newR][newC] != null && board[newR][newC].getColor() == this.color) return false;
+        for (Direction dir : DIAGONALS) {
+            if (this.processLine(dir.getRowDelta(), dir.getColDelta(), board, false, (row, column, piece) -> 
+                piece != null && newR != row && newC != column && piece.getColor() == this.color
+            )) return false;
+        }
         
         return true;
     }
