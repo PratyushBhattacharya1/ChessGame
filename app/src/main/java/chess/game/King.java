@@ -1,11 +1,14 @@
 package chess.game;
 
+import java.util.HashSet;
 import java.util.Set;
+
+import org.checkerframework.checker.units.qual.m;
 
 public class King extends SlidingPieces {
 
     public static final int MAX_MOVES = 8;
-    // public static final Title TITLE = Title.K;
+    public static final Title TITLE = Title.K;
 
     private static final Position[] CASTLE_POSITION_WHITE = 
         {new Position(7, 2), new Position(7, 6)};
@@ -17,7 +20,6 @@ public class King extends SlidingPieces {
 
     public King(Position position, Color color) {
         super(position, color);
-        this.TITLE = Title.K;
     }
 
     @Override
@@ -33,8 +35,19 @@ public class King extends SlidingPieces {
 
         // Return false if invalid pseudo legal king move 
         if (Math.abs(r - newR) > 1 || Math.abs(c - newC) > 1 || r == newR && c == newC
-            || board[newR][newC] != null && board[newR][newC].getColor() == this.color) {
+            || board[newR][newC] != null && board[newR][newC].getColor() == this.color)
             return false;
+
+        // Check all around the king for another king
+        for (Direction dir : Direction.values()) {
+            newR = r + dir.getRowDelta();
+            newC = c + dir.getColDelta();
+
+            if (Position.isValidPosition(newR, newC)) {
+                Piece piece = board[newR][newC];
+                if (piece != null && piece instanceof King && piece.getColor() != this.color) 
+                    return true;
+            }
         }
 
         return true;
@@ -56,8 +69,7 @@ public class King extends SlidingPieces {
                 int rookCol = (i == 0) ? 0 : 7;
                 Piece rook = board[row][rookCol];
                 // Check if similarly colored rook piece exists and hasn't moved
-                if (rook != null && rook instanceof Rook && !((Rook)rook).hasMoved() 
-                    && rook.getColor() == this.color) {
+                if (rook instanceof Rook && !((Rook)rook).hasMoved()) {
 
                     int kingCol = this.position.getColumn();
                     int dir = (rookCol == 0) ? -1 : 1;
@@ -82,76 +94,55 @@ public class King extends SlidingPieces {
 
     public boolean isInCheck(MoveContext mContext) {
 
-        var board = mContext.getBoard();
-        Piece lastMovedPiece = mContext.getLastMovedPiece();
-        Position lastMovedPiecePosition = lastMovedPiece.getPosition();
-
         int r = this.position.getRow();
         int c = this.position.getColumn();
-        int pieceRow = lastMovedPiecePosition.getRow();
-        int pieceCol = lastMovedPiecePosition.getColumn();
-       
 
-        if (lastMovedPiece.getColor() != this.color) {
-            if (lastMovedPiece instanceof Pawn) {
-                int rowDelta = lastMovedPiece.getColor() == Color.White ? -1 : 1;
-                int colDelta = Math.abs(pieceCol - c);
+        // Pawn direction to watch out for is fixed for color
+        int pawnDir = this.isWhite() ? -1 : 1;
+        int nextRow = r + pawnDir;
 
-                if ((pieceRow - r == rowDelta) && (colDelta == 1)) {
-                    return true; // Pawn can attack diagonally
-                }
-            } else if (lastMovedPiece instanceof Knight) {
-                // Check if knight is in a position to attack the king
-                if (Math.abs(pieceRow - r) == 2 && Math.abs(pieceCol - c) == 1 || 
-                    Math.abs(pieceRow - r) == 1 && Math.abs(pieceCol - c) == 2) {
+        var board = mContext.getBoard();
+
+        // Check left and right columns
+        for (int dc : new int[]{-1, 1}) {
+            int nextCol = c + dc;
+            if (Position.isValidRowOrColumn(nextCol)) {
+                // Check if piece there is opposite colored pawn
+                Piece piece = board[nextRow][nextCol];
+                if (piece != null && piece instanceof Pawn && piece.getColor() != this.color) {
                     return true;
-                }
-            } else if (lastMovedPiece instanceof Queen || lastMovedPiece instanceof Rook 
-                        && r == pieceRow ^ c == pieceCol) {
-                int rowDelta = Integer.signum(pieceRow - r);
-                int colDelta = Integer.signum(pieceCol - c);
-
-                if (this.processLine(rowDelta, colDelta, board, false, (row, column, piece) ->
-                        piece != null && piece.getColor() != this.color && (piece instanceof Queen || piece instanceof Rook)
-                )) return true;
-            } else if (lastMovedPiece instanceof Queen || lastMovedPiece instanceof Bishop 
-                        && Math.abs(r - pieceRow) != Math.abs(c - pieceCol)) {
-                int rowDelta = Integer.signum(pieceRow - r);
-                int colDelta = Integer.signum(pieceCol - c);
-
-                if (this.processLine(rowDelta, colDelta, board, false, (row, column, piece) ->
-                        piece != null && piece.getColor() != this.color && (piece instanceof Queen || piece instanceof Bishop)
-                )) return true;
-            }
-        } else {
-            if (r == pieceRow ^ c == pieceCol) {
-                int rowDelta = Integer.signum(pieceRow - r);
-                int colDelta = Integer.signum(pieceCol - c);
-
-                if (this.processLine(rowDelta, colDelta, board, false, (row, column, piece) ->
-                        piece != null && piece.getColor() != this.color && (piece instanceof Queen || piece instanceof Rook)
-                )) return true;
-            } else if (r == pieceRow ^ c == pieceCol) {
-                int rowDelta = Integer.signum(pieceRow - r);
-                int colDelta = Integer.signum(pieceCol - c);
-
-                if (this.processLine(rowDelta, colDelta, board, false, (row, column, piece) ->
-                        piece != null && piece.getColor() != this.color && (piece instanceof Queen || piece instanceof Bishop)
-                )) return true;
+               }
             }
         }
-        
 
-        // Check all around the king for another king
-        for (Direction dir : Direction.values()) {
-            int newR = r + dir.getRowDelta();
-            int newC = c + dir.getColDelta();
+        // All 8 possible horse positions
+        int[][] horsePositions = Knight.generateHorsePositions(r, c);
+
+        // Check every legal horse position for an oppsosite colroed knight
+        for (int[] hp : horsePositions) {
+            int newR = hp[0];
+            int newC = hp[1];
 
             if (Position.isValidPosition(newR, newC)) {
-                Piece piece = board[newR][newC];
-                if (piece != null && piece instanceof King && piece.getColor() != this.color) 
-                    return true;
+                if (board[newR][newC] != null && board[newR][newC] instanceof Knight 
+                    && board[newR][newC].getColor() != this.color) 
+                        return true;
             }
+        }
+
+        // Check each individual line for either queens/rooks/bishops
+        for (Direction dir : Direction.values()) {
+            int dr = dir.getRowDelta();
+            int dc = dir.getColDelta();
+
+            if (this.processLine(dr, dc, board, Boolean.FALSE, (row, column, piece) -> {
+                    if (piece != null && piece.getColor() != this.color) {
+                        if (piece instanceof Queen) return true;
+                        else if ((dr == 0 || dc == 0) && piece instanceof Rook) return true;
+                        else if ((dr != 0 && dc != 0) && piece instanceof Bishop) return true;
+                    }
+                    return false;
+            })) return true;
         }
 
         // Cleared all possible threats 
@@ -166,8 +157,22 @@ public class King extends SlidingPieces {
 
     @Override
     public Set<Position> generatePseudoLegalMoves(MoveContext mContext) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'generatePseudoLegalMoves'");
+        Set<Position> moves = new HashSet<>();
+        // var board = mContext.getBoard();
+
+        int r = this.position.getRow();
+        int c = this.position.getColumn();
+        // Check all around the king for another piece
+        for (Direction dir : Direction.values()) {
+            int newR = r + dir.getRowDelta();
+            int newC = c + dir.getColDelta();
+
+            if (Position.isValidPosition(newR, newC) && 
+                this.isPseudoLegalMove(new Position(newR, newC), mContext)) {
+                    moves.add(new Position(newR, newC));
+            }
+        }
+        return moves;
     }
 
 }
