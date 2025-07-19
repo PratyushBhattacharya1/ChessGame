@@ -58,7 +58,7 @@ public abstract class SlidingPieces extends PieceBehaviors {
         int colDelta = Integer.signum(newC - c);
 
         if (this.processLine(rowDelta, colDelta, board, false, (row, column, piece) -> 
-            piece != null && newR != row && newC != column && piece.getColor() == this.color
+            piece != null && piece.getColor() == this.color
         )) return false;
 
         return true;
