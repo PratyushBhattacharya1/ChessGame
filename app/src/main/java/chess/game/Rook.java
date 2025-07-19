@@ -19,12 +19,13 @@ import java.util.Set;
 public class Rook extends SlidingPieces {
 
     public static final int MAX_MOVES = 14;
-    public static final Title TITLE = Title.R;
+    // public static final Title TITLE = Title.R;
 
     private boolean hasMoved = false;
 
     public Rook(Position position, Color color) {
         super(position, color);
+        this.TITLE = Title.R;
     }
 
     @Override

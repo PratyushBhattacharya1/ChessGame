@@ -9,7 +9,7 @@ import java.util.Set;
 public class Pawn extends PieceBehaviors {
 
     public static final int MAX_MOVES = 4;
-    public static final Title TITLE = Title.P;
+    // public static final Title TITLE = Title.P;
 
     private final int PAWN_ROW = (this.isWhite())? 6 : 1;
     private final int OPP_PAWN_ROW = (this.isWhite())? 1 : 6;
@@ -28,6 +28,7 @@ public class Pawn extends PieceBehaviors {
      */
     public Pawn(Position position, Color color) {
         super(position, color);
+        this.TITLE = Title.P;
     }
 
     /**
@@ -84,7 +85,7 @@ public class Pawn extends PieceBehaviors {
                 return true;
 
 
-        int oppOnePawn = OPP_PAWN_ROW - dr, oppTwoPawn = oppOnePawn + dr;
+        int oppOnePawn = OPP_PAWN_ROW - dr, oppTwoPawn = oppOnePawn - dr;
 
         // Handle en passant if very specific conditions are met
         if (r == oppTwoPawn && newR == oppOnePawn && Math.abs(newC - c) == 1 
@@ -93,7 +94,7 @@ public class Pawn extends PieceBehaviors {
             Piece piece = board[r][newC];
             if (piece.getColor() != this.color && piece instanceof Pawn) {
                 // Allow en passant if same turn
-                if (((Pawn)piece).getEnPassantTurn() - ((this.isBlack())? 0 : 1) == turnCount) return true;
+                if (((Pawn)piece).getEnPassantTurn() == turnCount - ((this.isBlack())? 0 : 1)) return true;
             }
         }
 
@@ -108,10 +109,10 @@ public class Pawn extends PieceBehaviors {
         int dr = (this.isBlack())? 1 : -1, c = this.position.getColumn();
         int upOne = this.position.getRow() + dr;
 
-        Position oneUp = new Position(this.position.getRow() + dr, c);
+        Position oneUp = new Position(upOne, c);
         Position twoUp = new Position(upOne + dr, c);
-        Position oneLeft = new Position(oneUp);
-        Position oneRight = new Position(oneUp);
+        Position oneLeft = new Position(upOne, c - 1);
+        Position oneRight = new Position(upOne, c + 1);
         if (this.isPseudoLegalMove(oneUp, mContext)) moves.add(oneUp);
         if (this.isPseudoLegalMove(twoUp, mContext)) moves.add(twoUp);
         if (this.isPseudoLegalMove(oneLeft, mContext)) moves.add(oneLeft);

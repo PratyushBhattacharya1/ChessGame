@@ -54,11 +54,12 @@ public abstract class SlidingPieces extends PieceBehaviors {
         
         if (this.isPositionPieceSameColor(board, newR, newC)) return false;
 
-        for (Direction dir : ORTHOGONALS) {
-            if (this.processLine(dir.getRowDelta(), dir.getColDelta(), board, false, (row, column, piece) -> 
-                piece != null && newR != row && newC != column && piece.getColor() == this.color
-            )) return false;
-        }
+        int rowDelta = Integer.signum(newR - r);
+        int colDelta = Integer.signum(newC - c);
+
+        if (this.processLine(rowDelta, colDelta, board, false, (row, column, piece) -> 
+            piece != null && newR != row && newC != column && piece.getColor() == this.color
+        )) return false;
 
         return true;
     }
@@ -88,11 +89,12 @@ public abstract class SlidingPieces extends PieceBehaviors {
 
         if (this.isPositionPieceSameColor(board, newR, newC)) return false;
 
-        for (Direction dir : DIAGONALS) {
-            if (this.processLine(dir.getRowDelta(), dir.getColDelta(), board, false, (row, column, piece) -> 
-                piece != null && newR != row && newC != column && piece.getColor() == this.color
-            )) return false;
-        }
+        int rowDelta = Integer.signum(newR - r);
+        int colDelta = Integer.signum(newC - c);
+
+        if (this.processLine(rowDelta, colDelta, board, false, (row, column, piece) -> 
+            piece != null && newR != row && newC != column && piece.getColor() == this.color
+        )) return false;
         
         return true;
     }

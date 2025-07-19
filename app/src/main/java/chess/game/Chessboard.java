@@ -1,8 +1,13 @@
 package chess.game;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.Stack;
+
+import org.checkerframework.checker.units.qual.g;
+
+import chess.game.PieceBehaviors.Title;
 
 public class Chessboard {
     
@@ -46,6 +51,8 @@ public class Chessboard {
         this.gameState = GameState.ongoing;
         this.turnCount = 1;
         this.turnColor = Color.White;
+        this.blackPieces = new HashSet<>(16);
+        this.whitePieces = new HashSet<>(16);
         this.initializeBoard(board);
         this.boardHistory.push(board);
     }
@@ -68,26 +75,95 @@ public class Chessboard {
         }
 
         // Rooks
-        var rW1 = new Rook(new Position(WHITE_BACK_ROW, QUEENSIDE_ROOKS_COLUMN), Color.Black);
-        var rW2 = new Rook(new Position(WHITE_BACK_ROW, KINGSIDE_ROOKS_COLUMN), Color.Black);
-        var rB1 = new Rook(new Position(BLACK_BACK_ROW, QUEENSIDE_ROOKS_COLUMN), Color.White);
-        var rB2 = new Rook(new Position(BLACK_BACK_ROW, KINGSIDE_ROOKS_COLUMN), Color.White);
-        board[WHITE_BACK_ROW][QUEENSIDE_ROOKS_COLUMN] = rW1;
-        board[WHITE_BACK_ROW][KINGSIDE_ROOKS_COLUMN] = rW2;
-        board[BLACK_BACK_ROW][QUEENSIDE_ROOKS_COLUMN] = rB1;
-        board[BLACK_BACK_ROW][KINGSIDE_ROOKS_COLUMN] = rB2;
-        whitePieces.add(rW1);
-        whitePieces.add(rW2);
-        blackPieces.add(rB1);
-        blackPieces.add(rB2);
+        // var rW1 = new Rook(new Position(WHITE_BACK_ROW, QUEENSIDE_ROOKS_COLUMN), Color.Black);
+        // var rW2 = new Rook(new Position(WHITE_BACK_ROW, KINGSIDE_ROOKS_COLUMN), Color.Black);
+        // var rB1 = new Rook(new Position(BLACK_BACK_ROW, QUEENSIDE_ROOKS_COLUMN), Color.White);
+        // var rB2 = new Rook(new Position(BLACK_BACK_ROW, KINGSIDE_ROOKS_COLUMN), Color.White);
+        // board[WHITE_BACK_ROW][QUEENSIDE_ROOKS_COLUMN] = rW1;
+        // board[WHITE_BACK_ROW][KINGSIDE_ROOKS_COLUMN] = rW2;
+        // board[BLACK_BACK_ROW][QUEENSIDE_ROOKS_COLUMN] = rB1;
+        // board[BLACK_BACK_ROW][KINGSIDE_ROOKS_COLUMN] = rB2;
+        // whitePieces.add(rW1);
+        // whitePieces.add(rW2);
+        // blackPieces.add(rB1);
+        // blackPieces.add(rB2);
 
-        for (int i = 0; i < 12; i++) {
-            var piece = PieceFactory.create(
-                null, 
-                null, 
-                turnColor); 
+        Title[] titles = new Title[]{Title.R, Title.N, Title.B};
+
+        for (int i = 0; i < titles.length; i++) {
+            this.createPiece(titles[i], i, board);
+            this.createPiece(titles[i], BOARD_DIMENSIONS - 1 - i, board);
         }
+
+        this.createPiece(Title.Q, QUEEN_COLUMN, board);
+        
+        var positionWK = new Position(WHITE_BACK_ROW, KING_COLUMN);
+        var kingW = PieceFactory.create(
+            Title.K, 
+            positionWK, 
+            Color.White); 
+        whitePieces.add(kingW);
+        addToBoard(board, positionWK, kingW);
+        whiteKing = (King) kingW;
+
+        var positionBK = new Position(BLACK_BACK_ROW, KING_COLUMN);
+        var kingB = PieceFactory.create(
+            Title.K, 
+            positionBK, 
+            Color.Black); 
+        whitePieces.add(kingB);
+        addToBoard(board, positionBK, kingB);
+        blackKing = (King) kingB;
+
+        // for (int i = 0; i < 6; i++) {
+        //     var pieceW = PieceFactory.create(
+        //         null, 
+        //         null, 
+        //         Color.White); 
+        //     var pieceB = PieceFactory.create(
+        //         null, 
+        //         new Position(BLACK_BACK_ROW, (i < 3)? i % 3 : BOARD_DIMENSIONS - 1 - i % 3),
+        //         Color.Black); 
+        // }
  
+    }
+
+    private void createPiece(Title title, int column, Piece[][] board) {
+        var positionWQ = new Position(WHITE_BACK_ROW, column);
+        var pieceW = PieceFactory.create(
+            title, 
+            positionWQ, turnColor); 
+        whitePieces.add(pieceW);
+        addToBoard(board, positionWQ, pieceW);
+        
+        var positionBQ = new Position(BLACK_BACK_ROW, column);
+        var pieceB = PieceFactory.create(
+            title, 
+            positionBQ, 
+            Color.Black);
+        blackPieces.add(pieceB);
+        addToBoard(board, positionBQ, pieceB);
+
+        // var positionWK = new Position(WHITE_BACK_ROW, BOARD_DIMENSIONS - 1 - column);
+        // var pieceWK = PieceFactory.create(
+        //     title, 
+        //     positionWK, turnColor); 
+        // whitePieces.add(pieceWK);
+        // board[WHITE_BACK_ROW][column] = pieceWK;
+        
+        // var positionBK = new Position(BLACK_BACK_ROW, column);
+        // var pieceBK = PieceFactory.create(
+        //     title, 
+        //     positionBK, 
+        //     Color.Black);
+        // blackPieces.add(pieceBK);
+        // board[BLACK_BACK_ROW][column] = pieceBK;
+
+
+    }
+
+    private void addToBoard(Piece[][] board, Position position, Piece piece) {
+        board[position.getRow()][position.getColumn()] = piece;
     }
 
     /*
@@ -134,7 +210,7 @@ public class Chessboard {
         if (piece == null) return false;
         else if (this.turnColor != piece.getColor()) return false;
 
-        MoveContext mContext = new MoveContext(this.turnCount, board);
+        MoveContext mContext = new MoveContext(this.turnCount, board, piece);
 
         if (!piece.isPseudoLegalMove(targetPosition, mContext)) {
             return false;
@@ -142,8 +218,10 @@ public class Chessboard {
 
         Piece[][] newBoard = this.movePiece(piece, targetPosition, board);
 
+        mContext.setLastMovedPiece(piece);
+
         // TODO: Fails if the king moves this turn because whiteKing isn't updated by the time it calls isInCheck()
-        if ((this.isWhiteTurn() && this.whiteKing.isInCheck(newBoard)) || (this.isBlackTurn() && this.blackKing.isInCheck(newBoard))) {
+        if ((this.isWhiteTurn() && this.whiteKing.isInCheck(mContext)) || (this.isBlackTurn() && this.blackKing.isInCheck(mContext))) {
             if (piece instanceof Pawn) {
                 ((Pawn)piece).setEnPassantTurn(Pawn.DEFAULT_EN_PASSANT_TURN_VALUE);
             }

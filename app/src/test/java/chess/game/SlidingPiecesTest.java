@@ -3,7 +3,7 @@ package chess.game;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.List;
+import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
 
@@ -16,12 +16,14 @@ public class SlidingPiecesTest {
         }
 
         @Override
-        public boolean isPseudoLegalMove(Position targetPosition, Piece[][] board, int turnCount) {
-            throw new UnsupportedOperationException("Unimplemented method 'isValidMove'");
+        public boolean isPseudoLegalMove(Position targetPosition, MoveContext moveContext) {
+            // TODO Auto-generated method stub
+            throw new UnsupportedOperationException("Unimplemented method 'isPseudoLegalMove'");
         }
 
         @Override
-        public List<Position> generatePseudoLegalMoves(Piece[][] board) {
+        public Set<Position> generatePseudoLegalMoves(MoveContext moveContext) {
+            // TODO Auto-generated method stub
             throw new UnsupportedOperationException("Unimplemented method 'generatePseudoLegalMoves'");
         }
     }

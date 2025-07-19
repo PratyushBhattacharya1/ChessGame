@@ -17,7 +17,7 @@ import java.util.Set;
  */
 public class Queen extends SlidingPieces {
     public static final int MAX_MOVES = 27;
-    public static final Title TITLE = Title.Q;
+    // public static final Title TITLE = Title.Q;
 
     /**
      * Constructs a {@code Queen} chess piece with the specified position and color.
@@ -27,6 +27,7 @@ public class Queen extends SlidingPieces {
      */
     public Queen(Position position, Color color) {
         super(position, color);
+        this.TITLE = Title.Q;
     }
 
     /**

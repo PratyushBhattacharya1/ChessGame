@@ -11,7 +11,7 @@ import java.util.Set;
 public class Knight extends PieceBehaviors {
 
     public static final int MAX_MOVES = 8;
-    public static final Title TITLE = Title.N;
+    // public static final Title TITLE = Title.N;
 
     /**
      * Constructs a {@code Knight} chess piece with the specified position and color.
@@ -21,6 +21,7 @@ public class Knight extends PieceBehaviors {
      */
     public Knight(Position position, Color color) {
         super(position, color);
+        this.TITLE = Title.N;
     }
 
     /**
@@ -33,8 +34,7 @@ public class Knight extends PieceBehaviors {
      * </ul>
      *
      * @param targetPosition The position to which the knight is attempting to move.
-     * @param board The current state of the chess board.
-     * @param turnCount The current turn count in the game (unused in this method).
+     * @param mContext Context needed like board and relavent turn count. 
      * @return {@code true} if the move is valid for a knight; {@code false} otherwise.
      */
     @Override

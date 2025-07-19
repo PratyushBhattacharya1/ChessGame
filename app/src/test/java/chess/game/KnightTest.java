@@ -6,17 +6,20 @@ import static org.junit.jupiter.api.Assertions.*;
 public class KnightTest {
 
     Piece[][] board = new Piece[8][8];
-    Knight knight = new Knight(new Position(4, 4), Color.White);
+    Position defaultKnightPosition = new Position(4, 4);
+    Knight knight = new Knight(defaultKnightPosition, Color.White);
+    int turnCount = 1;
 
     @Test
     public void testValidKnightMoveEmptyTarget() {
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
-                int rowdiff = Math.abs(4 - i),
-                coldiff = Math.abs(4 - j);
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[0].length; j++) {
+                int rowdiff = Math.abs(defaultKnightPosition.getRow() - i),
+                coldiff = Math.abs(defaultKnightPosition.getColumn() - j);
 
-                if (!((rowdiff == 2 && coldiff == 1) || (rowdiff == 1 && coldiff == 2))) assertFalse(knight.isPseudoLegalMove(new Position(i, j), board, 0));
-                else assertTrue(knight.isPseudoLegalMove(new Position(i, j), board, 0));  
+                if (!((rowdiff == 2 && coldiff == 1) || (rowdiff == 1 && coldiff == 2))) 
+                    assertFalse(knight.isPseudoLegalMove(new Position(i, j), new MoveContext(turnCount, board)));
+                else assertTrue(knight.isPseudoLegalMove(new Position(i, j), new MoveContext(turnCount, board)));
             }
         }
     }
@@ -24,16 +27,18 @@ public class KnightTest {
     @Test
     public void testInvalidKnightMoveOwnPieceAtTarget() {
         // Place own piece at target
-        board[6][5] = new DummyPiece(new Position(6, 5), Color.White);
+        Position ownPiecePosition = new Position(6, 5);
+        board[6][5] = new DummyPiece(ownPiecePosition, Color.White);
 
-        assertFalse(knight.isPseudoLegalMove(new Position(6, 5), board, 0));
+        assertFalse(knight.isPseudoLegalMove(ownPiecePosition, new MoveContext(turnCount, board)));
     }
 
     @Test
     public void testValidKnightMoveOpponentPieceAtTarget() {
         // Place opponent's piece at target
-        board[6][5] = new DummyPiece(new Position(6, 5), Color.Black);
+        Position opponentPiecePosition = new Position(6, 5);
+        board[6][5] = new DummyPiece(opponentPiecePosition, Color.Black);
 
-        assertTrue(knight.isPseudoLegalMove(new Position(6, 5), board, 0));
+        assertTrue(knight.isPseudoLegalMove(opponentPiecePosition, new MoveContext(turnCount, board)));
     }
 }

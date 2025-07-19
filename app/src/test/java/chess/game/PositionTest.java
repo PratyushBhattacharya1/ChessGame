@@ -86,11 +86,21 @@ public class PositionTest {
     }
 
     @Test
+    public void testIsValidValue() {
+        assertTrue(Position.isValidRowOrColumn(0));
+        assertTrue(Position.isValidRowOrColumn(7));
+        assertFalse(Position.isValidRowOrColumn(-1));
+        assertFalse(Position.isValidRowOrColumn(8));
+    }
+
+    @Test
     public void testIsValidPosition_StaticWithInts() {
         assertTrue(Position.isValidPosition(0, 0));
         assertTrue(Position.isValidPosition(7, 7));
         assertFalse(Position.isValidPosition(-1, 0));
+        assertFalse(Position.isValidPosition(8, 0));
         assertFalse(Position.isValidPosition(0, 8));
+        assertFalse(Position.isValidPosition(0, -1));
     }
 
     @Test
@@ -98,8 +108,6 @@ public class PositionTest {
         assertEquals(7, Position.rankToRow('1'));
         assertEquals(0, Position.rankToRow('8'));
         assertEquals(3, Position.rankToRow('5'));
-        // assertEquals(-1, Position.rankToRow('9'));
-        // assertEquals(-1, Position.rankToRow('a'));
     }
 
     @Test
@@ -107,8 +115,6 @@ public class PositionTest {
         assertEquals(0, Position.fileToColumn('a'));
         assertEquals(7, Position.fileToColumn('h'));
         assertEquals(3, Position.fileToColumn('d'));
-        // assertEquals(-1, Position.fileToColumn('z'));
-        // assertEquals(-1, Position.fileToColumn('1'));
     }
 
     @Test
@@ -147,9 +153,21 @@ public class PositionTest {
         Position p1 = new Position(3, 4);
         Position p2 = new Position(3, 4);
         Position p3 = new Position(4, 3);
+        Object notAPosition = new Object();
+        assertFalse(p1.equals(notAPosition));
         assertTrue(p1.equals(p2));
         assertFalse(p1.equals(p3));
         assertFalse(p1.equals(new Position(3, 2)));
+    }
+
+    @Test
+    public void testHashCode() {
+        Position p1 = new Position(3, 4);
+        Position p2 = new Position(3, 4);
+        Position p3 = new Position(4, 3);
+        assertEquals(p1.hashCode(), p2.hashCode());
+        assertNotEquals(p1.hashCode(), p3.hashCode());
+        assertNotEquals(p1.hashCode(), new Position(3, 2).hashCode());
     }
 
     @Test

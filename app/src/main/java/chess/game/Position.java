@@ -123,8 +123,8 @@ public class Position {
     }
 
     // TODO: Tests and proper documentation.
-    public static boolean isValidRowOrColumn(int column) {
-        return (column < 8 && column >= 0);
+    public static boolean isValidRowOrColumn(int value) {
+        return (value < 8 && value >= 0);
     }
 
     /**
@@ -175,6 +175,11 @@ public class Position {
         int c = p.getColumn();
 
         return this.row == r && this.column == c;
+    }
+
+    @Override
+    public int hashCode() {
+        return this.row * 31 + this.column;
     }
 
     @Override

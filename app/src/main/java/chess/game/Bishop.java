@@ -15,7 +15,7 @@ import java.util.Set;
 public class Bishop extends SlidingPieces {
 
     public static final int MAX_MOVES = 13;
-    public static final Title TITLE = Title.B;
+    // public static final Title TITLE = Title.B;
 
     /**
      * Constructs a Bishop chess piece with the specified position and color.
@@ -25,6 +25,7 @@ public class Bishop extends SlidingPieces {
      */
     public Bishop(Position position, Color color) {
         super(position, color);
+        this.TITLE = Title.B;
     }
 
     /**

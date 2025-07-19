@@ -1,5 +1,7 @@
 package chess.game;
 
+import java.util.Set;
+
 final class DummyPiece implements Piece {
 
         private final Position position;
@@ -24,16 +26,22 @@ final class DummyPiece implements Piece {
         public boolean isBlack() {
             return this.color == Color.Black;
         }
-        
+
         @Override
-        public boolean isPseudoLegalMove(Position targetPosition, Piece[][] board, int turnCount) {
+        public boolean isPseudoLegalMove(Position targetPosition, MoveContext moveContext) {
             // TODO Auto-generated method stub
-            throw new UnsupportedOperationException("Unimplemented method 'isValidMove'");
+            throw new UnsupportedOperationException("Unimplemented method 'isPseudoLegalMove'");
         }
 
         @Override
-        public void move(Position p) {
+        public void move(Position p, MoveContext moveContext) {
             // TODO Auto-generated method stub
             throw new UnsupportedOperationException("Unimplemented method 'move'");
+        }
+
+        @Override
+        public Set<Position> generatePseudoLegalMoves(MoveContext moveContext) {
+            // TODO Auto-generated method stub
+            throw new UnsupportedOperationException("Unimplemented method 'generatePseudoLegalMoves'");
         }
     }
