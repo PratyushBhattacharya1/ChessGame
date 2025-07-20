@@ -3,10 +3,12 @@ package chess.game;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.checkerframework.checker.units.qual.t;
+
 public class King extends SlidingPieces {
 
     public static final int MAX_MOVES = 8;
-    public static final Title TITLE = Title.K;
+    // public static final Title TITLE = Title.K;
 
     private static final Position[] CASTLE_POSITION_WHITE = 
         {new Position(7, 2), new Position(7, 6)};
@@ -18,6 +20,7 @@ public class King extends SlidingPieces {
 
     public King(Position position, Color color) {
         super(position, color);
+        this.TITLE = Title.K;
     }
 
     @Override

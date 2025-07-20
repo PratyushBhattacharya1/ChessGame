@@ -13,13 +13,6 @@
         },
         {
             "type": "java",
-            "name": "GFG",
-            "request": "launch",
-            "mainClass": "chess.game.GFG",
-            "projectName": "app"
-        },
-        {
-            "type": "java",
             "name": "Current File",
             "request": "launch",
             "mainClass": "${file}"

@@ -48,7 +48,7 @@ public class Bishop extends SlidingPieces {
 
         for (Direction dr : DIAGONALS) {
             this.processLine(dr.getRowDelta(), dr.getColDelta(), board, moves, (row, column, piece) -> {
-                if (piece == null) moves.add(new Position(row, column));
+                if (piece == null || piece.getColor() != this.getColor()) moves.add(new Position(row, column));
                 return moves;
             });
         }

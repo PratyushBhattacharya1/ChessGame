@@ -108,4 +108,16 @@ public class QueenTest {
         assertEquals(23, whiteMoves.size(), whiteMoves.toString());
         assertEquals(23, blackMoves.size());
     }
+
+    @Test
+    public void testToString() {
+        assertEquals("WQ", whiteQueen.toString());
+        assertEquals("BQ", blackQueen.toString());
+    }
+
+    @Test
+    public void testGetPosition() {
+        assertEquals(new Position(3, 3), whiteQueen.getPosition());
+        assertEquals(new Position(4, 4), blackQueen.getPosition());
+    }
 }
