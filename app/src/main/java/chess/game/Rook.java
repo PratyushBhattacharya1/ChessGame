@@ -83,5 +83,4 @@ public class Rook extends SlidingPieces {
 
         return moves;
     }
-    
 }

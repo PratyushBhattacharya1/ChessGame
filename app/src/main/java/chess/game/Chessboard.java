@@ -17,12 +17,6 @@ public class Chessboard {
     private static final int BOARD_DIMENSIONS = 8;
     private static final int QUEEN_COLUMN = 3;
     private static final int KING_COLUMN = 4;
-    private static final int KINGSIDE_HORSES_COLUMN = 6;
-    private static final int QUEENSIDE_HORSES_COLUMN = 1;
-    private static final int KINGSIDE_BISHOPS_COLUMN = 5;
-    private static final int QUEENSIDE_BISHOPS_COLUMN = 2;
-    private static final int KINGSIDE_ROOKS_COLUMN = 7;
-    private static final int QUEENSIDE_ROOKS_COLUMN = 0;
     private static final int WHITE_BACK_ROW = 7;
     private static final int BLACK_BACK_ROW = 0;
     private static final int BLACK_PAWN_ROW = 6;
@@ -74,20 +68,6 @@ public class Chessboard {
 
         }
 
-        // Rooks
-        // var rW1 = new Rook(new Position(WHITE_BACK_ROW, QUEENSIDE_ROOKS_COLUMN), Color.Black);
-        // var rW2 = new Rook(new Position(WHITE_BACK_ROW, KINGSIDE_ROOKS_COLUMN), Color.Black);
-        // var rB1 = new Rook(new Position(BLACK_BACK_ROW, QUEENSIDE_ROOKS_COLUMN), Color.White);
-        // var rB2 = new Rook(new Position(BLACK_BACK_ROW, KINGSIDE_ROOKS_COLUMN), Color.White);
-        // board[WHITE_BACK_ROW][QUEENSIDE_ROOKS_COLUMN] = rW1;
-        // board[WHITE_BACK_ROW][KINGSIDE_ROOKS_COLUMN] = rW2;
-        // board[BLACK_BACK_ROW][QUEENSIDE_ROOKS_COLUMN] = rB1;
-        // board[BLACK_BACK_ROW][KINGSIDE_ROOKS_COLUMN] = rB2;
-        // whitePieces.add(rW1);
-        // whitePieces.add(rW2);
-        // blackPieces.add(rB1);
-        // blackPieces.add(rB2);
-
         Title[] titles = new Title[]{Title.R, Title.N, Title.B};
 
         for (int i = 0; i < titles.length; i++) {
@@ -113,19 +93,7 @@ public class Chessboard {
             Color.Black); 
         whitePieces.add(kingB);
         addToBoard(board, positionBK, kingB);
-        blackKing = (King) kingB;
-
-        // for (int i = 0; i < 6; i++) {
-        //     var pieceW = PieceFactory.create(
-        //         null, 
-        //         null, 
-        //         Color.White); 
-        //     var pieceB = PieceFactory.create(
-        //         null, 
-        //         new Position(BLACK_BACK_ROW, (i < 3)? i % 3 : BOARD_DIMENSIONS - 1 - i % 3),
-        //         Color.Black); 
-        // }
- 
+        blackKing = (King) kingB; 
     }
 
     private void createPiece(Title title, int column, Piece[][] board) {
@@ -143,23 +111,6 @@ public class Chessboard {
             Color.Black);
         blackPieces.add(pieceB);
         addToBoard(board, positionBQ, pieceB);
-
-        // var positionWK = new Position(WHITE_BACK_ROW, BOARD_DIMENSIONS - 1 - column);
-        // var pieceWK = PieceFactory.create(
-        //     title, 
-        //     positionWK, turnColor); 
-        // whitePieces.add(pieceWK);
-        // board[WHITE_BACK_ROW][column] = pieceWK;
-        
-        // var positionBK = new Position(BLACK_BACK_ROW, column);
-        // var pieceBK = PieceFactory.create(
-        //     title, 
-        //     positionBK, 
-        //     Color.Black);
-        // blackPieces.add(pieceBK);
-        // board[BLACK_BACK_ROW][column] = pieceBK;
-
-
     }
 
     private void addToBoard(Piece[][] board, Position position, Piece piece) {
