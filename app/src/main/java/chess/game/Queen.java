@@ -64,4 +64,9 @@ public class Queen extends SlidingPieces {
 
         return moves;
     }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return new Queen(this.getPosition(), this.getColor());
+    }
 }

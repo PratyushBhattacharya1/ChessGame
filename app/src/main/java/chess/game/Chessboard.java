@@ -5,8 +5,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.Stack;
 
-import org.checkerframework.checker.units.qual.g;
-
 import chess.game.PieceBehaviors.Title;
 
 public class Chessboard {
@@ -149,7 +147,7 @@ public class Chessboard {
     public void addToMoveHistory(String move) {this.moveHistory.add(move);}
 
 
-    public boolean tryMove(Position startingPosition, Position targetPosition) {
+    public boolean tryMove(Position startingPosition, Position targetPosition) throws CloneNotSupportedException {
         if (this.gameState != GameState.ongoing) return false;
 
         Piece[][] board = this.getBoard();
@@ -161,7 +159,7 @@ public class Chessboard {
         if (piece == null) return false;
         else if (this.turnColor != piece.getColor()) return false;
 
-        MoveContext mContext = new MoveContext(this.turnCount, board, piece);
+        MoveContext mContext = new MoveContext(this.turnCount, board);
 
         if (!piece.isPseudoLegalMove(targetPosition, mContext)) {
             return false;
@@ -169,39 +167,87 @@ public class Chessboard {
 
         Piece[][] newBoard = this.movePiece(piece, targetPosition, board);
 
-        mContext.setLastMovedPiece(piece);
+        // mContext.setLastMovedPiece(piece);
 
-        // TODO: Fails if the king moves this turn because whiteKing isn't updated by the time it calls isInCheck()
-        if ((this.isWhiteTurn() && this.whiteKing.isInCheck(mContext)) || (this.isBlackTurn() && this.blackKing.isInCheck(mContext))) {
-            if (piece instanceof Pawn) {
-                ((Pawn)piece).setEnPassantTurn(Pawn.DEFAULT_EN_PASSANT_TURN_VALUE);
-            }
+        if ((this.isWhiteTurn() && this.whiteKing.isInCheck(mContext)) 
+            || (this.isBlackTurn() && this.blackKing.isInCheck(mContext))) {
+            return false; 
+        }
+
+        mContext.setBoard(newBoard);
+
+        piece.move(targetPosition, mContext);
+        // Check for checkmate or stalemate
+        if (this.isInCheckmate(mContext)) {
+            this.gameState = (this.isWhiteTurn())? GameState.blackWon : GameState.whiteWon;
+            System.out.println("Checkmate! " + this.turnColor + " wins!");
+            return false;
+        } else if (this.isStalemate(mContext)) {
+            this.gameState = GameState.draw;
+            System.out.println("Stalemate! The game is a draw.");
             return false;
         }
 
-        if (piece instanceof King) {
-            if (this.isWhiteTurn()) this.whiteKing = (King) piece;
-            else this.blackKing = (King) piece;
-        }
 
-        piece.move(targetPosition, mContext);
         this.boardHistory.push(newBoard);
         this.endTurn();
 
         return true;
     }
 
-    public Piece[][] movePiece(Piece piece, Position targetPosition, Piece[][] board) {
+    private boolean isStalemate(MoveContext mContext) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    private boolean isInCheckmate(MoveContext mContext) throws CloneNotSupportedException {
+        King kingToCheckMate = (this.isWhiteTurn())? this.blackKing : this.whiteKing;
+        var allPiecesToCheck = (this.isWhiteTurn())? this.blackPieces : this.whitePieces;
+        
+        if (kingToCheckMate.isInCheck(mContext)) {
+            for (Piece piece : allPiecesToCheck) {
+                var possibleMoves = piece.generatePseudoLegalMoves(mContext);
+                for (Position position : possibleMoves) {
+                    var newboard = this.movePiece(piece, position, mContext.getBoard());
+                    var newContext = new MoveContext(mContext.getTurnCount(), newboard);
+                    if (!kingToCheckMate.isInCheck(newContext)) 
+                        return false;
+                }
+            }
+            return true; // No moves available to escape check
+        } else return false;
+        // return true; // No moves available to escape check
+    }
+
+    public Piece[][] movePiece(Piece piece, Position targetPosition, Piece[][] board) throws CloneNotSupportedException {
         int r = piece.getPosition().getRow();
         int c = piece.getPosition().getColumn();
         int newR = targetPosition.getRow();
         int newC = targetPosition.getColumn();
 
-        var newBoard = board.clone();
+        Piece[][] newBoard = new Piece[board.length][board[0].length];
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < newBoard.length; j++) {
+                if (board[i][j] != null) {
+                    newBoard[i][j] = (Piece) board[i][j].clone();
+                } else {
+                    newBoard[i][j] = null;
+                }
+            }
+        }
+
+        var targetPiece = board[newR][newC];
+        if (targetPiece != null) {
+            if (this.isWhiteTurn()) {
+                this.blackPieces.remove(targetPiece);
+            } else {
+                this.whitePieces.remove(targetPiece);
+            }
+        }
 
         newBoard[newR][newC] = piece;
         newBoard[r][c] = null;
-        return board;
+        return newBoard;
     }
 
     /**
@@ -210,14 +256,20 @@ public class Chessboard {
     public void printBoard() {
         System.out.printf("--- %s's turn: %d---\n", this.turnColor, this.turnCount);
 
-        //TODO: Make the letters/numbers clear on the printout
         Piece[][] board = getBoard();
-        for (int i = 0; i < board.length; i++) {
-            for (int j = 0; j < board[0].length; j++) {
-                // if ((j == 0) || (i == 8)) {
-                //     System.out.println("");
-                // }
-                Piece piece = board[i][j];
+        for (int row = 0; row <= board.length; row++) {
+            for (int column = 0; column <= board[0].length; column++) {
+                if (row == board.length && column > 0) {
+                    System.out.print((char)('a' + column - 1) + "  ");
+                    continue;
+                } else if (column == 0 && row < board.length) {
+                    System.out.print((char)('8' - row) + " ");
+                    continue;
+                } else if (row == board.length && column == 0) {
+                    System.out.print("  ");
+                    continue;
+                }
+                Piece piece = board[row][column - 1];
                 if (piece != null) System.out.print(piece + " ");
                 else System.out.print(" . ");
             }

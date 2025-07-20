@@ -11,7 +11,7 @@ public class ChessGame {
     private static final int SECOND_PARTITION = 4;
     private static final int FIRST_PARTITION = 2;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws CloneNotSupportedException {
         Chessboard chessboard = new Chessboard();
 
         while(chessboard.getGameState() == GameState.ongoing) {

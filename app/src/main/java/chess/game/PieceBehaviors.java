@@ -1,5 +1,7 @@
 package chess.game;
 
+import java.util.Set;
+
 /**
  * Abstract base class for chess piece behaviors, implementing the Piece interface.
  * Provides common functionality and properties for all chess pieces, such as position,
@@ -202,6 +204,12 @@ public abstract class PieceBehaviors implements Piece {
         return result;
     }
 
+    /**
+     * Returns a string representation of the piece, indicating its color ("W" for white, "B" for black)
+     * followed by its title.
+     *
+     * @return a string representing the piece's color and title
+     */
     @Override
     public String toString() {
         return "" + (this.isWhite()? "W" : "B") + TITLE;
@@ -217,5 +225,22 @@ public abstract class PieceBehaviors implements Piece {
      */
     protected boolean isPositionPieceSameColor(Piece[][] board, int newR, int newC) {
         return board[newR][newC] != null && board[newR][newC].getColor() == this.color;
+    }
+    
+    @Override
+    public Set<Position> generatePseudoLegalMoves(MoveContext moveContext) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public boolean isPseudoLegalMove(Position targetPosition, MoveContext moveContext) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
     }
 }

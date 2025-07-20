@@ -3,6 +3,8 @@ package chess.game;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.checkerframework.checker.units.qual.m;
+
 /**
  * Represents a pawn chess piece.
  */
@@ -75,7 +77,6 @@ public class Pawn extends PieceBehaviors {
             && board[twoUp][c] == null) 
                 return true;
 
-
         // Handle single square move
         if (newR == oneUp && c == newC && board[newR][c] == null) return true;
 
@@ -109,21 +110,48 @@ public class Pawn extends PieceBehaviors {
         int dr = (this.isBlack())? 1 : -1, c = this.position.getColumn();
         int upOne = this.position.getRow() + dr;
 
-        Position oneUp = new Position(upOne, c);
-        Position twoUp = new Position(upOne + dr, c);
-        Position oneLeft = new Position(upOne, c - 1);
-        Position oneRight = new Position(upOne, c + 1);
-        if (this.isPseudoLegalMove(oneUp, mContext)) moves.add(oneUp);
-        if (this.isPseudoLegalMove(twoUp, mContext)) moves.add(twoUp);
-        if (this.isPseudoLegalMove(oneLeft, mContext)) moves.add(oneLeft);
-        if (this.isPseudoLegalMove(oneRight, mContext)) moves.add(oneRight);
+        addToList(mContext, moves, upOne + dr, c);
+        addToList(mContext, moves, upOne + dr, c);
+        addToList(mContext, moves, upOne, c - 1);
+        addToList(mContext, moves, upOne, c + 1);
 
         return moves;
+    }
+
+    private void addToList(MoveContext mContext, Set<Position> moves, int row, int column) {
+        if (Position.isValidPosition(row, column)) {
+            Position pos = new Position(row, column);
+            if (this.isPseudoLegalMove(pos, mContext)) moves.add(pos);
+        }
     }
 
     @Override
     public void move(Position p, MoveContext mContext) {
         super.move(p, mContext);
-        this.enPassantTurn = mContext.getTurnCount();
+        if (this.isPushingTwoSquares(p, mContext)) this.enPassantTurn = mContext.getTurnCount();
+    }
+
+    private boolean isPushingTwoSquares(Position targetPosition, MoveContext mContext) {
+        int r = this.position.getRow();
+        int c = this.position.getColumn();
+        int newR = targetPosition.getRow();
+        int newC = targetPosition.getColumn();
+
+        var board = mContext.getBoard();
+        int dr = (this.isBlack())? 1 : -1;
+        int oneUp = r + dr, twoUp = oneUp + dr;
+        
+        if (r == PAWN_ROW && newR == twoUp && c == newC && board[oneUp][c] == null 
+            && board[twoUp][c] == null) 
+                return true;
+
+        return false;
+    }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        var pawn = new Pawn(this.getPosition(), this.getColor());
+        pawn.setEnPassantTurn(this.getEnPassantTurn());
+        return pawn;
     }
 }

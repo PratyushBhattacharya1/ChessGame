@@ -85,4 +85,9 @@ public class Knight extends PieceBehaviors {
             {r - 1, c - 2}
         };
      }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return new Knight(this.getPosition(), this.getColor());
+    }
 }

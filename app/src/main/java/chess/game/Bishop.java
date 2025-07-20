@@ -55,4 +55,9 @@ public class Bishop extends SlidingPieces {
 
         return moves;
     }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return new Bishop(this.getPosition(), this.getColor());
+    }
 }

@@ -177,4 +177,10 @@ public class King extends SlidingPieces {
         return moves;
     }
 
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        var King = new King(this.getPosition(), this.getColor());
+        King.hasMoved = this.hasMoved;
+        return King;
+    }
 }

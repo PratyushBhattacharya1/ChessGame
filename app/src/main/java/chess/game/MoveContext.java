@@ -25,4 +25,8 @@ public class MoveContext {
     public int getTurnCount() { return turnCount; }
     public Piece[][] getBoard() { return board; }
     public Piece getLastMovedPiece() { return lastMovedPiece; }
+
+    public void setBoard(Piece[][] newBoard) {
+        this.board = newBoard;
+    }
 }

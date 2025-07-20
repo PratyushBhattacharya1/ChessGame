@@ -67,4 +67,14 @@ public interface Piece {
      * @return a set of positions representing all possible pseudo-legal moves for this piece
      */
     public Set<Position> generatePseudoLegalMoves(MoveContext moveContext);
+
+
+    /**
+     * Creates and returns a copy of this object.
+     *
+     * @return a clone of this instance.
+     * @throws CloneNotSupportedException if the object's class does not support the {@code Cloneable} interface.
+     */
+    public Object clone() throws CloneNotSupportedException;
+
 }

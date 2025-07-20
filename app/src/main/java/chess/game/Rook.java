@@ -83,4 +83,11 @@ public class Rook extends SlidingPieces {
 
         return moves;
     }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        var Rook = new Rook(this.position, this.color);
+        Rook.hasMoved = this.hasMoved;
+        return Rook;
+    }
 }
