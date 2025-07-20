@@ -180,6 +180,12 @@ public class PawnTest {
         assertTrue(whiteCapturer.isPseudoLegalMove(new Position(oneUpBlack, defaultBlackPosition.getColumn() + 1), mContext));
         assertTrue(blackCapturer.isPseudoLegalMove(new Position(oneUpWhite, defaultWhitePosition.getColumn() - 1), mContext));
         assertTrue(blackCapturer.isPseudoLegalMove(new Position(oneUpWhite, defaultWhitePosition.getColumn() + 1), mContext));
+
+        board[blackPawnLeftPosition.getRow()][blackPawnLeftPosition.getColumn()] = 
+            new Pawn(blackPawnLeftPosition, Color.White);
+        blackPawnRight.setEnPassantTurn(turnCount - 99);
+        assertFalse(whiteCapturer.isPseudoLegalMove(new Position(oneUpBlack, defaultBlackPosition.getColumn() - 1), mContext));
+        assertFalse(whiteCapturer.isPseudoLegalMove(new Position(oneUpBlack, defaultBlackPosition.getColumn() + 1), mContext));
     }
 
     @Test

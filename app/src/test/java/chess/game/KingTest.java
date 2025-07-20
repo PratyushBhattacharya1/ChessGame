@@ -55,6 +55,33 @@ public class KingTest {
         }
     }
 
+    @Test 
+    public void testKingCannotMoveNextToKing() {
+        // Place a black king next to the white king
+        Position blackKingAdjacentRight = new Position(whiteKingPosition.getRow(), whiteKingPosition.getColumn() + 2);
+        board[blackKingAdjacentRight.getRow()][blackKingAdjacentRight.getColumn()] = blackKing;
+        Position blackKingAdjacentUp = new Position(whiteKingPosition.getRow() - 2, whiteKingPosition.getColumn());
+        board[blackKingAdjacentUp.getRow()][blackKingAdjacentUp.getColumn()] = blackKing;
+        Position blackKingAdjacentLeft = new Position(whiteKingPosition.getRow(), whiteKingPosition.getColumn() - 2);
+        board[blackKingAdjacentLeft.getRow()][blackKingAdjacentLeft.getColumn()] = blackKing;
+
+        Position blackKingAdjacentDown = new Position(blackKingPosition.getRow() + 2, blackKingPosition.getColumn());
+        board[blackKingAdjacentDown.getRow()][blackKingAdjacentDown.getColumn()] = blackKing;
+
+        // Check that the white king cannot move to the adjacent position
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[i].length; j++) {
+                if (i == whiteKingPosition.getRow() + 1) continue;
+                Position p = new Position(i, j);
+                assertFalse(whiteKing.isPseudoLegalMove(p, mContext),
+                    "White King should not be able to move next to Black King at " + p);
+            }
+        }
+
+        assertTrue(blackKing.isPseudoLegalMove(
+            new Position(blackKingPosition.getRow() + 1, blackKingPosition.getColumn()), mContext));
+    }
+
     @Test
     public void testValidKingMovesObstructed() {
         // Place a piece in the way of the white king
@@ -277,5 +304,70 @@ public class KingTest {
         queensideTarget = new Position(0, 2);
         assertTrue(blackKing.isPseudoLegalMove(queensideTarget, mContext), 
             "Black King should be able to castle queenside");
+    }
+
+    @Test
+    public void testCannotCastleIfMoved() {
+        // Reset the board
+        board = new Piece[BOARD_SIZE][BOARD_SIZE];
+        MoveContext mContext = new MoveContext(turnCount, board);
+
+        Position whiteRookKingsidePos = new Position(7, 7);
+        Position whiteRookQueensidePos = new Position(7, 0);
+        Position blackRookKingsidePos = new Position(0, 7);
+        Position blackRookQueensidePos = new Position(0, 0);
+
+        Position randomWhiteRookPos = new Position(6, 5);
+
+        board[whiteRookKingsidePos.getRow()][whiteRookKingsidePos.getColumn()] = 
+            new Rook(whiteRookKingsidePos, Color.White);
+        board[whiteRookQueensidePos.getRow()][whiteRookQueensidePos.getColumn()] = 
+            new Rook(whiteRookQueensidePos, Color.White);
+
+        board[blackRookKingsidePos.getRow()][blackRookKingsidePos.getColumn()] = 
+            new Rook(blackRookKingsidePos, Color.Black);
+        var blackRookQueenside = new Rook(blackRookQueensidePos, Color.Black);
+        board[blackRookQueensidePos.getRow()][blackRookQueensidePos.getColumn()] = 
+            blackRookQueenside;
+        blackRookQueenside.move(blackRookQueensidePos, mContext); 
+
+        var randomWhiteRook = new Rook(randomWhiteRookPos, Color.White);
+        board[randomWhiteRookPos.getRow()][randomWhiteRookPos.getColumn()] =
+            randomWhiteRook;
+
+        Position whiteKPosition = new Position(7, 4);
+        whiteKing = new King(whiteKPosition, Color.White);
+        board[whiteKPosition.getRow()][whiteKPosition.getColumn()] = whiteKing;
+
+        Position blackKPosition = new Position(0, 4);
+        blackKing = new King(blackKPosition, Color.Black);
+        board[blackKPosition.getRow()][blackKPosition.getColumn()] = blackKing;
+
+        // Move the king to prevent castling
+        whiteKing.move(new Position(6, 4), mContext);
+
+        // Test kingside castling
+        Position kingsideTargetWhite = new Position(7, 6);
+        assertFalse(whiteKing.isPseudoLegalMove(kingsideTargetWhite, mContext), 
+            "White King should not be able to castle kingside after moving");
+
+        // Test queenside castling
+        Position queensideTargetWhite = new Position(7, 2);
+        assertFalse(whiteKing.isPseudoLegalMove(queensideTargetWhite, mContext), 
+            "White King should not be able to castle queenside after moving");
+
+        // Test black king castling
+        Position kingsideTargetBlack = new Position(0, 6);
+        assertFalse(blackKing.isPseudoLegalMove(kingsideTargetBlack, mContext), 
+            "Black King should not be able to castle kingside because of white rook");
+
+        Position queensideTargetBlack = new Position(0, 2);
+        assertFalse(blackKing.isPseudoLegalMove(queensideTargetBlack, mContext), 
+            "Black King should not be able to castle queenside after moving");
+    }
+
+    @Test
+    public void testgeneratePseudoLegalMoves() {
+        
     }
 }

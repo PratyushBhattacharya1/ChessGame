@@ -51,7 +51,7 @@ public class Knight extends PieceBehaviors {
 
         if (!((rowdiff == 2 && coldiff == 1) || (rowdiff == 1 && coldiff == 2))) return false;
 
-        if (board[newR][newC] != null && board[newR][newC].getColor() == this.color) return false;
+        if (this.isPositionPieceSameColor(board, newR, newC)) return false;
 
         return true;
     }
@@ -63,14 +63,15 @@ public class Knight extends PieceBehaviors {
         for (int[] arr : generateHorsePositions(this.position.getRow(), this.position.getColumn())) {
             int row = arr[0];
             int column = arr[1];
-            if (Position.isValidPosition(row, column) && mContext.getBoard()[row][column] == null) 
+            if (Position.isValidPosition(row, column) && (mContext.getBoard()[row][column] == null 
+                || !this.isPositionPieceSameColor(mContext.getBoard(), row, column))) 
                 moves.add(new Position(row, column)); 
         }
 
         return moves;
     }
 
-    public static int[][] generateHorsePositions(int r, int c) {
+    public final static int[][] generateHorsePositions(int r, int c) {
         if (!Position.isValidPosition(r, c)) throw new IllegalArgumentException("Arguments out of bounds");
 
         return new int[][]{

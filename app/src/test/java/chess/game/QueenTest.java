@@ -82,6 +82,9 @@ public class QueenTest {
         // Place a white piece at (4, 2)
         board[4][2] = new DummyPiece(new Position(4, 2), Color.White);
         assertTrue(blackQueen.isPseudoLegalMove(new Position(4, 2), new MoveContext(turnCount, board)));
+
+        board[6][6] = new DummyPiece(new Position(6, 6), Color.White);
+        assertTrue(blackQueen.isPseudoLegalMove(new Position(6, 6), new MoveContext(turnCount, board)));
     }
 
     @Test
@@ -91,9 +94,9 @@ public class QueenTest {
         // Queen tries to move to (3, 7) but path is blocked at (3, 5)
         assertFalse(whiteQueen.isPseudoLegalMove(new Position(3, 7), new MoveContext(turnCount, board)));
         // Place a piece between black queen and target
-        board[4][2] = new DummyPiece(new Position(4, 2), Color.White);
-        // Black queen tries to move to (4, 0) but path is blocked at (4, 2)
-        assertFalse(blackQueen.isPseudoLegalMove(new Position(4, 0), new MoveContext(turnCount, board)));
+        board[6][6] = new DummyPiece(new Position(6, 6), Color.White);
+        // Black queen tries to move to (7, 7) but path is blocked at (6, 6)
+        assertFalse(blackQueen.isPseudoLegalMove(new Position(7, 7), new MoveContext(turnCount, board)));
     }
 
     @Test
@@ -102,7 +105,7 @@ public class QueenTest {
         Set<Position> whiteMoves = whiteQueen.generatePseudoLegalMoves(mContext);
         Set<Position> blackMoves = blackQueen.generatePseudoLegalMoves(mContext);
 
-        assertEquals(23, whiteMoves.size());
+        assertEquals(23, whiteMoves.size(), whiteMoves.toString());
         assertEquals(23, blackMoves.size());
     }
 }

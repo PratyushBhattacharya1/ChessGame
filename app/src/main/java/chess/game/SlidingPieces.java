@@ -64,11 +64,6 @@ public abstract class SlidingPieces extends PieceBehaviors {
         return true;
     }
 
-    // Target position cannot be the same color
-    private boolean isPositionPieceSameColor(Piece[][] board, int newR, int newC) {
-        return board[newR][newC] != null && board[newR][newC].getColor() == this.color;
-    }
-
     /**
      * Checks if the bishop can move from its current position to the specified target position
      * according to chess rules. The move is valid if the target position is on the same diagonal

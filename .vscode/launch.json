@@ -6,6 +6,20 @@
     "configurations": [
         {
             "type": "java",
+            "name": "ChessGameGUI",
+            "request": "launch",
+            "mainClass": "chess.game.ChessGameGUI",
+            "projectName": "app"
+        },
+        {
+            "type": "java",
+            "name": "GFG",
+            "request": "launch",
+            "mainClass": "chess.game.GFG",
+            "projectName": "app"
+        },
+        {
+            "type": "java",
             "name": "Current File",
             "request": "launch",
             "mainClass": "${file}"

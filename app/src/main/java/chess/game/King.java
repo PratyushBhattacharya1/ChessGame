@@ -3,8 +3,6 @@ package chess.game;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.checkerframework.checker.units.qual.m;
-
 public class King extends SlidingPieces {
 
     public static final int MAX_MOVES = 8;
@@ -34,19 +32,19 @@ public class King extends SlidingPieces {
         if (this.canCastle(targetPosition, mContext)) return true;
 
         // Return false if invalid pseudo legal king move 
-        if (Math.abs(r - newR) > 1 || Math.abs(c - newC) > 1 || r == newR && c == newC
-            || board[newR][newC] != null && board[newR][newC].getColor() == this.color)
+        if (Math.abs(r - newR) > 1 || Math.abs(c - newC) > 1 || (r == newR && c == newC)
+            || this.isPositionPieceSameColor(board, newR, newC))
             return false;
 
         // Check all around the king for another king
         for (Direction dir : Direction.values()) {
-            newR = r + dir.getRowDelta();
-            newC = c + dir.getColDelta();
+            int dr = newR + dir.getRowDelta();
+            int dc = newC + dir.getColDelta();
 
-            if (Position.isValidPosition(newR, newC)) {
-                Piece piece = board[newR][newC];
+            if (Position.isValidPosition(dr, dc)) {
+                Piece piece = board[dr][dc];
                 if (piece != null && piece instanceof King && piece.getColor() != this.color) 
-                    return true;
+                    return false;
             }
         }
 
@@ -54,7 +52,8 @@ public class King extends SlidingPieces {
     }
 
     private boolean canCastle(Position targetPosition, MoveContext mContext) {
-        if (hasMoved) return false;
+        if (this.hasMoved) return false;
+        if (this.isInCheck(mContext)) return false;
 
         // Copy correct potential positions based on color
         Position[] castlePositions = this.isWhite() ? CASTLE_POSITION_WHITE : CASTLE_POSITION_BLACK;
@@ -68,7 +67,7 @@ public class King extends SlidingPieces {
                 // Rook column depends on which castling side we matched with
                 int rookCol = (i == 0) ? 0 : 7;
                 Piece rook = board[row][rookCol];
-                // Check if similarly colored rook piece exists and hasn't moved
+                // Check if rook piece exists and hasn't moved
                 if (rook instanceof Rook && !((Rook)rook).hasMoved()) {
 
                     int kingCol = this.position.getColumn();
