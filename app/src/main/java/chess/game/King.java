@@ -3,8 +3,6 @@ package chess.game;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.checkerframework.checker.units.qual.t;
-
 public class King extends SlidingPieces {
 
     public static final int MAX_MOVES = 8;

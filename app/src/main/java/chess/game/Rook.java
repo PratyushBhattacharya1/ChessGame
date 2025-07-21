@@ -61,12 +61,12 @@ public class Rook extends SlidingPieces {
     }
 
     public boolean hasMoved() {
-        return hasMoved;
+        return this.hasMoved;
     }
 
     public void move(Position p, MoveContext mContext) {
         super.move(p, mContext);
-        hasMoved = true;
+        this.hasMoved = true;
     }
 
     @Override

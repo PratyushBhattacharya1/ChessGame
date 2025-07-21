@@ -66,6 +66,15 @@ public class SlidingPiecesTest {
     }
 
     @Test
+    public void testInvalidRookMoveObstructedTwo() {
+        board[3][5] = new DummyPiece(new Position(3, 5), Color.Black); // Obstruction
+
+        assertFalse(whiteRook.isValidRookMove(new Position(3, 6), board));
+        assertTrue(whiteRook.isValidRookMove(new Position(3, 5), board));
+        assertTrue(whiteRook.isValidRookMove(new Position(3, 4), board));
+    }
+
+    @Test
     public void testInvalidRookMoveSameSquare() {
         assertFalse(whiteRook.isValidRookMove(new Position(3, 3), board));
     }

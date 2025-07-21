@@ -49,8 +49,19 @@ public class ChessGame {
                 continue;
             }
 
-            chessboard.addToMoveHistory(move);
+            if (chessboard.getGameState() == GameState.whiteWon) {
+                System.out.println("Congratulations! White wins!");
+            } else if (chessboard.getGameState() == GameState.blackWon) {
+                System.out.println("Congratulations! Black wins!");
+            } else if (chessboard.getGameState() == GameState.draw) {
+                System.out.println("It's a draw!");
+            } else if (chessboard.getGameState() == GameState.stalemate) {
+                System.out.println("Stalemate! No legal moves left.");
+            }
 
+            chessboard.addToMoveHistory(move);
         }
+        System.out.println(chessboard.getMoveHistory());
     }
+    
 }

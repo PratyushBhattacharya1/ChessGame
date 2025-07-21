@@ -44,4 +44,10 @@ final class DummyPiece implements Piece {
             // TODO Auto-generated method stub
             throw new UnsupportedOperationException("Unimplemented method 'generatePseudoLegalMoves'");
         }
+
+        @Override
+        public Object clone() throws CloneNotSupportedException {
+            // TODO Auto-generated method stub
+            return super.clone();
+        }
     }

@@ -57,7 +57,7 @@ public class Queen extends SlidingPieces {
 
         for (Direction direction : Direction.values()) {
             this.processLine(direction.getRowDelta(), direction.getColDelta(), board, moves, (row, column, piece) -> {
-                if (piece == null) moves.add(new Position(row, column));
+                if (piece == null || piece.getColor() != this.getColor()) moves.add(new Position(row, column));
                 return moves;
             });
         }

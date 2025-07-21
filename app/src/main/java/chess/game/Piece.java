@@ -15,6 +15,8 @@ public interface Piece {
      */
     public Position getPosition();
 
+    // public void setPosition(Position position);
+
     /**
      * Returns the color of this chess piece.
      *

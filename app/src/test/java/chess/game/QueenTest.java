@@ -105,8 +105,8 @@ public class QueenTest {
         Set<Position> whiteMoves = whiteQueen.generatePseudoLegalMoves(mContext);
         Set<Position> blackMoves = blackQueen.generatePseudoLegalMoves(mContext);
 
-        assertEquals(23, whiteMoves.size(), whiteMoves.toString());
-        assertEquals(23, blackMoves.size());
+        assertEquals(24, whiteMoves.size(), whiteMoves.toString());
+        assertEquals(24, blackMoves.size());
     }
 
     @Test

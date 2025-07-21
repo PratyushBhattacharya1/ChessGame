@@ -52,14 +52,22 @@ public abstract class SlidingPieces extends PieceBehaviors {
 
         if (!(r == newR ^ c == newC)) return false;
         
+        return isPathClear(board, r, c, newR, newC);
+    }
+
+    private boolean isPathClear(Piece[][] board, int r, int c, int newR, int newC) {
         if (this.isPositionPieceSameColor(board, newR, newC)) return false;
 
         int rowDelta = Integer.signum(newR - r);
         int colDelta = Integer.signum(newC - c);
 
-        if (this.processLine(rowDelta, colDelta, board, false, (row, column, piece) -> 
-            piece != null && !(newR == row && newC == column)
-        )) return false;
+        if (this.processLine(rowDelta, colDelta, board, false, (row, column, piece) -> {
+            if ( ((rowDelta > 0)? row >= newR : row <= newR) 
+                && ((colDelta > 0)? column >= newC : column <= newC))
+                // If we've passed the target square, stop processing (don't care if it's occupied)
+                return false;
+            return piece != null;
+        })) return false;
 
         return true;
     }
@@ -82,15 +90,6 @@ public abstract class SlidingPieces extends PieceBehaviors {
         // Absolute value difference between tiles must be equal to each other
         if (Math.abs(r - newR) != Math.abs(c - newC) || targetPosition.equals(this.position)) return false;
 
-        if (this.isPositionPieceSameColor(board, newR, newC)) return false;
-
-        int rowDelta = Integer.signum(newR - r);
-        int colDelta = Integer.signum(newC - c);
-
-        if (this.processLine(rowDelta, colDelta, board, false, (row, column, piece) -> 
-            piece != null && !(newR == row && newC == column)
-        )) return false;
-        
-        return true;
+        return isPathClear(board, r, c, newR, newC);
     }
 }

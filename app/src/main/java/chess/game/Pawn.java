@@ -3,8 +3,6 @@ package chess.game;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.checkerframework.checker.units.qual.m;
-
 /**
  * Represents a pawn chess piece.
  */
@@ -110,7 +108,7 @@ public class Pawn extends PieceBehaviors {
         int dr = (this.isBlack())? 1 : -1, c = this.position.getColumn();
         int upOne = this.position.getRow() + dr;
 
-        addToList(mContext, moves, upOne + dr, c);
+        addToList(mContext, moves, upOne, c);
         addToList(mContext, moves, upOne + dr, c);
         addToList(mContext, moves, upOne, c - 1);
         addToList(mContext, moves, upOne, c + 1);

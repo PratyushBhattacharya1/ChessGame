@@ -122,7 +122,12 @@ public class Position {
         return (row < 8 && row >= 0 && column < 8 && column >= 0);
     }
 
-    // TODO: Tests and proper documentation.
+    /**
+     * Checks if the given value is a valid row or column index on a standard 8x8 chessboard.
+     *
+     * @param value the row or column index to check
+     * @return {@code true} if the value is between 0 (inclusive) and 8 (exclusive), {@code false} otherwise
+     */
     public static boolean isValidRowOrColumn(int value) {
         return (value < 8 && value >= 0);
     }

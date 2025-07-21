@@ -243,4 +243,17 @@ public abstract class PieceBehaviors implements Piece {
     public Object clone() throws CloneNotSupportedException {
         return super.clone();
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (! (obj instanceof Piece)) return false;
+
+        Piece otherPiece = (Piece) obj;
+        return position.equals(otherPiece.getPosition());
+    }
+
+    @Override
+    public int hashCode() {
+        return position.hashCode();
+    }
 }
