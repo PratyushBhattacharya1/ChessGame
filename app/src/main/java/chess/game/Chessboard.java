@@ -227,6 +227,7 @@ public class Chessboard {
         int newR = targetPosition.getRow();
         int newC = targetPosition.getColumn();
 
+        // Clone board to avoid modifying the original
         Piece[][] newBoard = new Piece[BOARD_DIMENSIONS][BOARD_DIMENSIONS];
         for (int i = 0; i < BOARD_DIMENSIONS; i++) {
             for (int j = 0; j < BOARD_DIMENSIONS; j++) {
@@ -238,21 +239,17 @@ public class Chessboard {
             }
         }
 
+        // Remove target piece if captured
         var targetPiece = board[newR][newC];
         if (targetPiece != null) {
             if (this.isWhiteTurn()) {
                 this.blackPieces.remove(targetPiece);
-                // this.whitePieces.remove(piece);
-                // piece.getPosition().setPosition(targetPosition);
-                // this.whitePieces.add(piece);
             } else {
                 this.whitePieces.remove(targetPiece); 
-                // this.blackPieces.remove(piece);
-                // piece.getPosition().setPosition(targetPosition);
-                // this.blackPieces.add(piece);
             }
         }
 
+        // Update piece position without modifying hasMoved/enPassant values
         if (this.isWhiteTurn() && piece.getColor() == Color.White) {
             this.whitePieces.remove(piece);
             piece.getPosition().setPosition(targetPosition);
