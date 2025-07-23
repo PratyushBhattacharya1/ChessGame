@@ -2,6 +2,7 @@ package chess.game;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.Stack;
@@ -82,7 +83,7 @@ public class Chessboard {
             Title.K, 
             positionWK, 
             Color.White); 
-        whitePieces.add(kingW);
+        // whitePieces.add(kingW);
         addToBoard(board, positionWK, kingW);
         whiteKing = (King) kingW;
 
@@ -91,7 +92,7 @@ public class Chessboard {
             Title.K, 
             positionBK, 
             Color.Black); 
-        blackPieces.add(kingB);
+        // blackPieces.add(kingB);
         addToBoard(board, positionBK, kingB);
         blackKing = (King) kingB; 
     }
@@ -149,47 +150,28 @@ public class Chessboard {
     public void addToMoveHistory(String move) {this.moveHistory.add(move);}
 
 
-    public boolean tryMove(Position startingPosition, Position targetPosition) throws CloneNotSupportedException {
+    public boolean tryMove(Position startingPosition, Position targetPosition) {
         if (this.gameState != GameState.ongoing) return false;
 
         Piece[][] board = this.getBoard();
-        int r = startingPosition.getRow();
-        int c = startingPosition.getColumn();
+        Piece piece = board[startingPosition.getRow()][startingPosition.getColumn()];
+        var mContext = new MoveContext(this.turnCount, this.getBoard());
 
-        Piece piece = board[r][c];
-
-        if (piece == null) return false;
-        else if (this.turnColor != piece.getColor()) return false;
-
-        MoveContext mContext = new MoveContext(this.turnCount, board);
-
-        if (!piece.isPseudoLegalMove(targetPosition, mContext)) {
+        if (!MoveValidator.validateMove(piece, targetPosition, mContext)) 
             return false;
-        }
-
-        Piece[][] newBoard = this.movePiece(piece, targetPosition, board);
-        mContext.setBoard(newBoard);
-
-        if ((this.isWhiteTurn() && this.whiteKing.isInCheck(mContext)) 
-            || (this.isBlackTurn() && this.blackKing.isInCheck(mContext))) {
-            mContext.setBoard(board);
-            this.movePiece(piece, startingPosition, newBoard);
-            System.out.println("Illegal move! The king is in check.");
-            return false; 
-        }
+    
 
         piece.move(targetPosition, mContext);
+        board[startingPosition.getRow()][startingPosition.getColumn()] = null;
+        board[targetPosition.getRow()][targetPosition.getColumn()] = piece;
         // Check for checkmate or stalemate
         if (this.isInCheckmate(mContext)) {
             this.gameState = (this.isWhiteTurn())? GameState.whiteWon : GameState.blackWon;
-            return true;
         } else if (this.isStalemate(mContext)) {
             this.gameState = GameState.draw;
-            return true;
         }
 
-
-        this.boardHistory.push(newBoard);
+        this.boardHistory.push(board);
         this.endTurn();
 
         return true;
@@ -212,7 +194,7 @@ public class Chessboard {
         return true; // If no pieces have legal moves, it's stalemate
     }
 
-    private boolean isInCheckmate(MoveContext mContext) throws CloneNotSupportedException {
+    private boolean isInCheckmate(MoveContext mContext) {
         King kingToCheckMate = (this.isWhiteTurn())? this.blackKing : this.whiteKing;
         var allPiecesToCheck = (this.isWhiteTurn())? this.blackPieces : this.whitePieces;
 
@@ -220,20 +202,21 @@ public class Chessboard {
             return false;
         }
 
+        if (!kingToCheckMate.generatePseudoLegalMoves(mContext).isEmpty()) {
+            return false;
+        }
+
         for (Piece piece : allPiecesToCheck) {
+            // if (piece instanceof King) continue; // Skip the king itself
             var possibleMoves = piece.generatePseudoLegalMoves(mContext);
             for (Position position : possibleMoves) {
-                var newboard = this.movePiece(piece, position, mContext.getBoard());
-                var newContext = new MoveContext(mContext.getTurnCount(), newboard);
-                if (piece instanceof King) kingToCheckMate = (King) piece;
-                if (!kingToCheckMate.isInCheck(newContext)) 
-                    return false;
+                MoveValidator.simulateMove(getBoard(), piece, position);
             }
         }
         return true; // No moves available to escape check
     }
 
-    public Piece[][] movePiece(Piece piece, Position targetPosition, Piece[][] board) throws CloneNotSupportedException {
+    public Piece[][] movePiece(Piece piece, Position targetPosition, Piece[][] board) {
         int r = piece.getPosition().getRow();
         int c = piece.getPosition().getColumn();
         int newR = targetPosition.getRow();
@@ -244,7 +227,11 @@ public class Chessboard {
         for (int i = 0; i < BOARD_DIMENSIONS; i++) {
             for (int j = 0; j < BOARD_DIMENSIONS; j++) {
                 if (board[i][j] != null) {
-                    newBoard[i][j] = (Piece) board[i][j].clone();
+                    try {
+                        newBoard[i][j] = (Piece) board[i][j].clone();
+                    } catch (CloneNotSupportedException e) {
+                        e.printStackTrace();
+                    }
                 } else {
                     newBoard[i][j] = null;
                 }
@@ -344,27 +331,22 @@ public class Chessboard {
     public boolean handleSquareSelection(int row, int col) {
         var p = new Position(row, col);
         if (this.selectedPosition == null 
-            || (this.getBoard()[row][col] != null && this.getBoard()[row][col].getColor() == this.turnColor)) {
+            || (this.getBoard()[row][col] != null && this.getBoard()[row][col].getColor() == this.turnColor
+            || this.getBoard()[this.selectedPosition.getRow()][this.selectedPosition.getColumn()] == null)) {
             this.selectedPosition = p;
             System.out.println("Selected square: " + p);
             return false;
         } else {
-            try {
-                System.out.println("Moving from " + this.selectedPosition + " to " + p);
-                if (!this.tryMove(this.selectedPosition, p)) {
-                    System.out.println("Invalid move");
-                    this.selectedPosition = null;
-                    return false;
-                } else {
-                    System.out.println("Move successful");
-                    this.printBoard();
-                    this.selectedPosition = null;
-                    return true;
-                }
-            } catch (CloneNotSupportedException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+            System.out.println("Moving from " + this.selectedPosition + " to " + p);
+            if (!this.tryMove(this.selectedPosition, p)) {
+                System.out.println("Invalid move");
+                this.selectedPosition = null;
                 return false;
+            } else {
+                System.out.println("Move successful");
+                this.printBoard();
+                this.selectedPosition = null;
+                return true;
             }
         }
     }
@@ -373,14 +355,28 @@ public class Chessboard {
         return this.selectedPosition;
     }
 
-    public Set<Position> getPossibleMoves(int row, int col) {
+    public Set<Position> getLegalMoves(int row, int col) {
         Piece[][] board = this.getBoard();
         Piece piece = board[row][col];
         if (piece == null || piece.getColor() != this.turnColor) {
             return new HashSet<>();
         }
         MoveContext mContext = new MoveContext(this.turnCount, board);
-        return piece.generatePseudoLegalMoves(mContext);
+        var moves = piece.generatePseudoLegalMoves(mContext);
+        var it = moves.iterator();
+        while (it.hasNext()) {
+            Position position = it.next();
+            var newBoard = this.movePiece(piece, position, mContext.getBoard());
+            var newContext = new MoveContext(this.turnCount, newBoard);
+            if (this.isWhiteTurn() && this.whiteKing.isInCheck(newContext)) {
+                it.remove();
+            }
+            else if (this.isBlackTurn() && this.blackKing.isInCheck(newContext)) {
+                it.remove();
+            }
+            board = this.movePiece(piece, new Position(row, col), board);
+        }
+        return moves;
     }
 
     public boolean isInCheck() {

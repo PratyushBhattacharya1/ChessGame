@@ -53,6 +53,11 @@ public class King extends SlidingPieces {
             }
         }
 
+        // Check if the move would put the king in check
+        King tempKing = new King(targetPosition, this.color);
+        var mContext1 = new MoveContext(mContext.getTurnCount(), board);
+        if (tempKing.isInCheck(mContext1)) return false;
+
         return true;
     }
 

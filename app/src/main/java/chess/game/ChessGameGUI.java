@@ -95,7 +95,8 @@ public class ChessGameGUI extends JFrame {
     }
 
     public void highLightLegalMoves(Position position) {
-        Set<Position> legalMoves = chessboard.getPossibleMoves(position.getRow(), position.getColumn());
+        Set<Position> legalMoves = chessboard.getLegalMoves(position.getRow(), position.getColumn());
+        squares[position.getRow()][position.getColumn()].setBackground(java.awt.Color.RED);
         for (Position pos : legalMoves) {
             squares[pos.getRow()][pos.getColumn()].setBackground(java.awt.Color.YELLOW);
         }
