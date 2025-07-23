@@ -6,13 +6,6 @@ import java.util.Set;
 public class King extends SlidingPieces {
 
     public static final int MAX_MOVES = 8;
-    // public static final Title TITLE = Title.K;
-
-    // private static final Position[] CASTLE_POSITION_WHITE = 
-        // {new Position(7, 2), new Position(7, 6)};
-        
-    // private static final Position[] CASTLE_POSITION_BLACK = 
-        // {new Position(0, 2), new Position(0, 6)};
 
     public final Position[] CASTLE_POSITION = (this.isWhite()) 
         ? new Position[]{new Position(7, 2), new Position(7, 6)} : 
@@ -48,7 +41,7 @@ public class King extends SlidingPieces {
 
             if (Position.isValidPosition(dr, dc)) {
                 Piece piece = board[dr][dc];
-                if (piece != null && piece instanceof King && piece.getColor() != this.color) 
+                if (piece instanceof King && piece.getColor() != this.color) 
                     return false;
             }
         }
@@ -144,7 +137,7 @@ public class King extends SlidingPieces {
             int dr = dir.getRowDelta();
             int dc = dir.getColDelta();
 
-            if (this.processLine(dr, dc, board, Boolean.FALSE, (row, column, piece) -> {
+            if (this.processLine(dr, dc, board, false, (row, column, piece) -> {
                     if (piece != null && piece.getColor() != this.color) {
                         if (piece instanceof Queen) return true;
                         else if ((dr == 0 || dc == 0) && piece instanceof Rook) return true;
