@@ -8,11 +8,15 @@ public class King extends SlidingPieces {
     public static final int MAX_MOVES = 8;
     // public static final Title TITLE = Title.K;
 
-    private static final Position[] CASTLE_POSITION_WHITE = 
-        {new Position(7, 2), new Position(7, 6)};
+    // private static final Position[] CASTLE_POSITION_WHITE = 
+        // {new Position(7, 2), new Position(7, 6)};
         
-    private static final Position[] CASTLE_POSITION_BLACK = 
-        {new Position(0, 2), new Position(0, 6)};
+    // private static final Position[] CASTLE_POSITION_BLACK = 
+        // {new Position(0, 2), new Position(0, 6)};
+
+    public final Position[] CASTLE_POSITION = (this.isWhite()) 
+        ? new Position[]{new Position(7, 2), new Position(7, 6)} : 
+        new Position[]{new Position(0, 2), new Position(0, 6)};
 
     private boolean hasMoved = false;
 
@@ -30,7 +34,7 @@ public class King extends SlidingPieces {
 
         var board = mContext.getBoard();
 
-        if (this.canCastle(targetPosition, mContext)) return true;
+        // if (this.canCastle(targetPosition, mContext)) return true;
 
         // Return false if invalid pseudo legal king move 
         if (Math.abs(r - newR) > 1 || Math.abs(c - newC) > 1 || (r == newR && c == newC)
@@ -52,19 +56,19 @@ public class King extends SlidingPieces {
         return true;
     }
 
-    private boolean canCastle(Position targetPosition, MoveContext mContext) {
+    public boolean canCastle(Position targetPosition, MoveContext mContext) {
         if (this.hasMoved) return false;
         if (this.isInCheck(mContext)) return false;
 
         // Copy correct potential positions based on color
-        Position[] castlePositions = this.isWhite() ? CASTLE_POSITION_WHITE : CASTLE_POSITION_BLACK;
+        // Position[] castlePositions = this.isWhite() ? CASTLE_POSITION_WHITE : CASTLE_POSITION_BLACK;
         int row = this.isWhite() ? 7 : 0;
         var board = mContext.getBoard();
 
         // Loop through respective color kingside/queenside castling positions until we hit target position
-        for (int i = 0; i < castlePositions.length; i++) {
+        for (int i = 0; i < CASTLE_POSITION.length; i++) {
             // Target position matches a castling position. The player wants to castle.
-            if (targetPosition.equals(castlePositions[i])) {
+            if (targetPosition.equals(CASTLE_POSITION[i])) {
                 // Rook column depends on which castling side we matched with
                 int rookCol = (i == 0) ? 0 : 7;
                 Piece rook = board[row][rookCol];
@@ -78,7 +82,7 @@ public class King extends SlidingPieces {
                         if (board[row][c] != null) return false;
                     }
                     // Check king does not pass through or end up in check
-                    for (int c = kingCol; c != castlePositions[i].getColumn() + dir; c += dir) {
+                    for (int c = kingCol; c != CASTLE_POSITION[i].getColumn() + dir; c += dir) {
                         King tempKing = new King(new Position(row, c), this.color);
                         if (tempKing.isInCheck(mContext)) return false;
                     }

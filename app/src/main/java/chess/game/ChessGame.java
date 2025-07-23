@@ -28,10 +28,17 @@ public class ChessGame {
                 continue;
             }
 
-            if (move.length() != MOVE_SIZE) {
-                System.out.println("Input isn't four characters");
-                continue;
+            if (move.equalsIgnoreCase("O-O") || move.equalsIgnoreCase("O-O-O")) {
+                if (!chessboard.tryCastling(move)) {
+                    System.out.println("Cannot Castle!");
+                    continue;
+                }
             }
+
+            // if (move.length() != MOVE_SIZE) {
+            //     System.out.println("Input isn't four characters");
+            //     continue;
+            // }
 
             Position startingPosition;
             Position targetPosition;
@@ -41,6 +48,9 @@ public class ChessGame {
                 targetPosition = Position.stringToPosition(move.substring(FIRST_PARTITION, SECOND_PARTITION));
             } catch (IllegalArgumentException IllegalArgumentException) {
                 System.out.println("Position was invalid");
+                continue;
+            } catch (StringIndexOutOfBoundsException e) {
+                // System.out.println();
                 continue;
             }
 

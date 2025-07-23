@@ -80,7 +80,7 @@ public class Chessboard {
             Title.K, 
             positionWK, 
             Color.White); 
-        // whitePieces.add(kingW);
+        whitePieces.add(kingW);
         addToBoard(board, positionWK, kingW);
         whiteKing = (King) kingW;
 
@@ -89,7 +89,7 @@ public class Chessboard {
             Title.K, 
             positionBK, 
             Color.Black); 
-        // blackPieces.add(kingB);
+        blackPieces.add(kingB);
         addToBoard(board, positionBK, kingB);
         blackKing = (King) kingB; 
     }
@@ -170,8 +170,7 @@ public class Chessboard {
 
         if ((this.isWhiteTurn() && this.whiteKing.isInCheck(mContext)) 
             || (this.isBlackTurn() && this.blackKing.isInCheck(mContext))) {
-            // this.movePiece
-            mContext.setBoard(board); // revert to original board
+            mContext.setBoard(board);
             this.movePiece(piece, startingPosition, newBoard);
             System.out.println("Illegal move! The king is in check.");
             return false; 
@@ -181,11 +180,9 @@ public class Chessboard {
         // Check for checkmate or stalemate
         if (this.isInCheckmate(mContext)) {
             this.gameState = (this.isWhiteTurn())? GameState.whiteWon : GameState.blackWon;
-            // System.out.println("Checkmate! " + this.turnColor + " wins!");
             return true;
         } else if (this.isStalemate(mContext)) {
             this.gameState = GameState.draw;
-            // System.out.println("Stalemate! The game is a draw.");
             return true;
         }
 
@@ -197,8 +194,20 @@ public class Chessboard {
     }
 
     private boolean isStalemate(MoveContext mContext) {
-        // TODO Auto-generated method stub
-        return false;
+        King kingToCheckMate = (this.isWhiteTurn())? this.blackKing : this.whiteKing;
+        var allPiecesToCheck = (this.isWhiteTurn())? this.blackPieces : this.whitePieces;
+
+        if (kingToCheckMate.isInCheck(mContext)) {
+            return false; // Not a stalemate if the king is in check
+        }
+
+        for (Piece piece : allPiecesToCheck) {
+            var possibleMoves = piece.generatePseudoLegalMoves(mContext);
+            if (!possibleMoves.isEmpty()) {
+                return false; // If any piece has a legal move, it's not stalemate
+            }
+        }
+        return true; // If no pieces have legal moves, it's stalemate
     }
 
     private boolean isInCheckmate(MoveContext mContext) throws CloneNotSupportedException {
@@ -296,6 +305,37 @@ public class Chessboard {
             }
             System.out.println();
         }
+    }
+
+    public boolean tryCastling(String move) throws CloneNotSupportedException {
+        var king = (this.isWhiteTurn())? this.whiteKing : this.blackKing;
+        var position = (move.equalsIgnoreCase("O-O")) ? 
+            king.CASTLE_POSITION[1] : king.CASTLE_POSITION[0];
+        var rookColumn = (move.equalsIgnoreCase("O-O")) ? 7 : 0;
+        var rook = this.getBoard()[king.getPosition().getRow()][rookColumn];
+
+        if(king.canCastle(position, new MoveContext(this.turnCount, this.getBoard()))) {
+            var newRookCol = (rookColumn == 7) ? 5 : 3;
+            var board = this.movePiece(king, position, this.getBoard());
+            board = this.movePiece(rook, new Position(king.getPosition().getRow(), newRookCol), board);
+            king.move(position, new MoveContext(this.turnCount, board));
+            rook.move(new Position(king.getPosition().getRow(), newRookCol), new MoveContext(this.turnCount, board));
+            var mContext = new MoveContext(this.turnCount, board);
+
+            if (this.isInCheckmate(mContext)) {
+                this.gameState = (this.isWhiteTurn())? GameState.whiteWon : GameState.blackWon;
+                return true;
+            } else if (this.isStalemate(mContext)) {
+                this.gameState = GameState.draw;
+                return true;
+            }
+
+            this.boardHistory.push(board);
+            this.endTurn();
+
+            return true;
+        }
+        return false;
     }
 
 }
