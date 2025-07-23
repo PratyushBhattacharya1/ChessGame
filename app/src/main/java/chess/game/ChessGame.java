@@ -34,12 +34,7 @@ public class ChessGame {
                     continue;
                 }
             }
-
-            // if (move.length() != MOVE_SIZE) {
-            //     System.out.println("Input isn't four characters");
-            //     continue;
-            // }
-
+            
             Position startingPosition;
             Position targetPosition;
 

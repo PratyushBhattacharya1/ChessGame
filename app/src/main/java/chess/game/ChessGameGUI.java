@@ -6,13 +6,14 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class ChessGameGUI extends JFrame {
     private static final String TITLE = "Chess Game";
     private static final int BOARD_DIMENSIONS = 8;
     private final ChessSquareComponent[][] squares = 
         new ChessSquareComponent[BOARD_DIMENSIONS][BOARD_DIMENSIONS];
-    private final Chessboard chessBoard = new Chessboard();
+    private final Chessboard chessboard = new Chessboard();
 
     private final Map<Class<? extends Piece>, String> pieceUnicodeMap = new HashMap<>() {
         {
@@ -43,7 +44,7 @@ public class ChessGameGUI extends JFrame {
                 ChessSquareComponent square = new ChessSquareComponent(row, col);
                 square.addMouseListener(new MouseAdapter() {
                     @Override
-                    public void mouseClicked(MouseEvent e) {
+                    public void mouseReleased(MouseEvent e) {
                         handleSquareClick(finalRow, finalCol);
                     }
                 });
@@ -52,13 +53,13 @@ public class ChessGameGUI extends JFrame {
             }
         }
         refreshBoard();
-        }
+    }
 
     private void refreshBoard() {
-        var board = chessBoard.getBoard();
+        var board = chessboard.getBoard();
         for (int row = 0; row < board.length; row++) {
             for (int col = 0; col < board[row].length; col++) {
-                Piece piece = board[row][col]; // Assuming ChessBoard has a getPiece method
+                Piece piece = board[row][col];
                 if (piece != null) {
                     // If using Unicode symbols:
                     String symbol = pieceUnicodeMap.get(piece.getClass());
@@ -73,15 +74,54 @@ public class ChessGameGUI extends JFrame {
     }
 
     private void handleSquareClick(int row, int col) {
-        // if (game.handleSquareSelection(row, col)) {
-        //     refreshBoard();
-        //     checkGameState();
-        // }
+        this.clearHighlights();
+        if (chessboard.handleSquareSelection(row, col)) {
+            // this.clearHighlights();
+            this.refreshBoard();
+            this.checkGameState();
+        } else if (chessboard.getSelectedPosition() != null) {
+            // this.clearHighlights();
+            System.out.println("Highlighting legal moves");
+            this.highLightLegalMoves(chessboard.getSelectedPosition());
+        }
+    }
+
+    private void clearHighlights() {
+        for (int row = 0; row < squares.length; row++) {
+            for (int col = 0; col < squares[row].length; col++) {
+                squares[row][col].setBackground((row + col) % 2 == 0 ? ChessSquareComponent.CHESS_GRAY : ChessSquareComponent.CHESS_GREEN);
+            }
+        }
+    }
+
+    public void highLightLegalMoves(Position position) {
+        Set<Position> legalMoves = chessboard.getPossibleMoves(position.getRow(), position.getColumn());
+        for (Position pos : legalMoves) {
+            squares[pos.getRow()][pos.getColumn()].setBackground(java.awt.Color.YELLOW);
+        }
     }
 
 
     private void checkGameState() {
+        var currentPlayer = (chessboard.isWhiteTurn())? "White" : "Black";
+        boolean inCheck = chessboard.isInCheck();
 
+        System.out.println("GameState: " + chessboard.getGameState());
+
+        if (chessboard.getGameState() == GameState.whiteWon) {
+            JOptionPane.showMessageDialog(this, "White has won the game!");
+            return;
+        } else if (chessboard.getGameState() == GameState.blackWon) {
+            JOptionPane.showMessageDialog(this, "Black has won the game!");
+            return;
+        } else if (chessboard.getGameState() == GameState.draw) {
+            JOptionPane.showMessageDialog(this, "The game is a draw!");
+            return;
+        }
+
+        if (inCheck) {
+            JOptionPane.showMessageDialog(this, currentPlayer + " is in check!");
+        }
     }
 
     public static void main(String[] args) {

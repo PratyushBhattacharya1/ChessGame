@@ -288,21 +288,21 @@ public class KingTest {
 
         // Test kingside castling
         Position kingsideTarget = new Position(7, 6);
-        assertTrue(whiteKing.isPseudoLegalMove(kingsideTarget, mContext), 
+        assertTrue(whiteKing.canCastle(kingsideTarget, mContext), 
             "White King should be able to castle kingside");
         
         // Test queenside castling
         Position queensideTarget = new Position(7, 2);
-        assertTrue(whiteKing.isPseudoLegalMove(queensideTarget, mContext), 
+        assertTrue(whiteKing.canCastle(queensideTarget, mContext), 
             "White King should be able to castle queenside");
 
         // Test black king castling
         kingsideTarget = new Position(0, 6);
-        assertTrue(blackKing.isPseudoLegalMove(kingsideTarget, mContext), 
+        assertTrue(blackKing.canCastle(kingsideTarget, mContext), 
             "Black King should be able to castle kingside");
 
         queensideTarget = new Position(0, 2);
-        assertTrue(blackKing.isPseudoLegalMove(queensideTarget, mContext), 
+        assertTrue(blackKing.canCastle(queensideTarget, mContext), 
             "Black King should be able to castle queenside");
     }
 

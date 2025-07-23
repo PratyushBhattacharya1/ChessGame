@@ -2,6 +2,7 @@ package chess.game;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.Stack;
 
@@ -32,6 +33,7 @@ public class Chessboard {
     private Color turnColor;
     private Set<Piece> whitePieces;
     private Set<Piece> blackPieces;
+    private Position selectedPosition;
 
     /**
      * Initializes the chessboard with pieces in their starting positions.
@@ -223,6 +225,7 @@ public class Chessboard {
             for (Position position : possibleMoves) {
                 var newboard = this.movePiece(piece, position, mContext.getBoard());
                 var newContext = new MoveContext(mContext.getTurnCount(), newboard);
+                if (piece instanceof King) kingToCheckMate = (King) piece;
                 if (!kingToCheckMate.isInCheck(newContext)) 
                     return false;
             }
@@ -336,6 +339,54 @@ public class Chessboard {
             return true;
         }
         return false;
+    }
+
+    public boolean handleSquareSelection(int row, int col) {
+        var p = new Position(row, col);
+        if (this.selectedPosition == null 
+            || (this.getBoard()[row][col] != null && this.getBoard()[row][col].getColor() == this.turnColor)) {
+            this.selectedPosition = p;
+            System.out.println("Selected square: " + p);
+            return false;
+        } else {
+            try {
+                System.out.println("Moving from " + this.selectedPosition + " to " + p);
+                if (!this.tryMove(this.selectedPosition, p)) {
+                    System.out.println("Invalid move");
+                    this.selectedPosition = null;
+                    return false;
+                } else {
+                    System.out.println("Move successful");
+                    this.printBoard();
+                    this.selectedPosition = null;
+                    return true;
+                }
+            } catch (CloneNotSupportedException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+                return false;
+            }
+        }
+    }
+
+    public Position getSelectedPosition() {
+        return this.selectedPosition;
+    }
+
+    public Set<Position> getPossibleMoves(int row, int col) {
+        Piece[][] board = this.getBoard();
+        Piece piece = board[row][col];
+        if (piece == null || piece.getColor() != this.turnColor) {
+            return new HashSet<>();
+        }
+        MoveContext mContext = new MoveContext(this.turnCount, board);
+        return piece.generatePseudoLegalMoves(mContext);
+    }
+
+    public boolean isInCheck() {
+        var board = this.getBoard();
+        var mContext = new MoveContext(this.turnCount, board);
+        return this.isWhiteTurn() ? this.whiteKing.isInCheck(mContext) : this.blackKing.isInCheck(mContext);
     }
 
 }
