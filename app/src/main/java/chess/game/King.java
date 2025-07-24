@@ -27,7 +27,7 @@ public class King extends SlidingPieces {
 
         var board = mContext.getBoard();
 
-        // if (this.canCastle(targetPosition, mContext)) return true;
+        if (this.canCastle(targetPosition, mContext)) return true;
 
         // Return false if invalid pseudo legal king move 
         if (Math.abs(r - newR) > 1 || Math.abs(c - newC) > 1 || (r == newR && c == newC)
@@ -59,7 +59,6 @@ public class King extends SlidingPieces {
         if (this.isInCheck(mContext)) return false;
 
         // Copy correct potential positions based on color
-        // Position[] castlePositions = this.isWhite() ? CASTLE_POSITION_WHITE : CASTLE_POSITION_BLACK;
         int row = this.isWhite() ? 7 : 0;
         var board = mContext.getBoard();
 
@@ -108,7 +107,7 @@ public class King extends SlidingPieces {
         // Check left and right columns
         for (int dc : new int[]{-1, 1}) {
             int nextCol = c + dc;
-            if (Position.isValidRowOrColumn(nextCol)) {
+            if (Position.isValidPosition(nextRow, nextCol)) {
                 // Check if piece there is opposite colored pawn
                 Piece piece = board[nextRow][nextCol];
                 if (piece != null && piece instanceof Pawn && piece.getColor() != this.color) {
@@ -174,6 +173,13 @@ public class King extends SlidingPieces {
                     moves.add(new Position(newR, newC));
             }
         }
+
+        for (Position pos : CASTLE_POSITION) {
+            if (this.canCastle(pos, mContext)) {
+                moves.add(pos);
+            }            
+        }
+        
         return moves;
     }
 

@@ -125,8 +125,9 @@ public class Pawn extends PieceBehaviors {
 
     @Override
     public void move(Position p, MoveContext mContext) {
-        super.move(p, mContext);
         if (this.isPushingTwoSquares(p, mContext)) this.enPassantTurn = mContext.getTurnCount();
+        super.move(p, mContext);
+        // System.out.println("Pawn moved to " + p + " with en passant turn: " + this.enPassantTurn);
     }
 
     private boolean isPushingTwoSquares(Position targetPosition, MoveContext mContext) {
