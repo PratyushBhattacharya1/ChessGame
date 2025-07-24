@@ -71,9 +71,7 @@ public class Pawn extends PieceBehaviors {
         int turnCount = mContext.getTurnCount();
 
         // Handle initial two-square move
-        if (r == this.PAWN_ROW && newR == twoUp && c == newC && board[oneUp][c] == null 
-            && board[twoUp][c] == null) 
-                return true;
+        if (this.isPushingTwoSquares(targetPosition, mContext)) return true;
 
         // Handle single square move
         if (newR == oneUp && c == newC && board[newR][c] == null) return true;
@@ -84,21 +82,20 @@ public class Pawn extends PieceBehaviors {
                 return true;
 
 
-        int oppOnePawn = OPP_PAWN_ROW - dr, oppTwoPawn = oppOnePawn - dr;
+        // int oppOnePawn = OPP_PAWN_ROW - dr, oppTwoPawn = oppOnePawn - dr;
 
-        // Handle en passant if very specific conditions are met
-        if (r == oppTwoPawn && newR == oppOnePawn && Math.abs(newC - c) == 1 
-            && board[newR][newC] == null && board[r][newC] != null) {
+        // // Handle en passant if very specific conditions are met
+        // if (r == oppTwoPawn && newR == oppOnePawn && Math.abs(newC - c) == 1 
+        //     && board[newR][newC] == null && board[r][newC] != null) {
 
-            Piece piece = board[r][newC];
-            if (piece.getColor() != this.color && piece instanceof Pawn) {
-                // Allow en passant if same turn
-                if (((Pawn)piece).getEnPassantTurn() == turnCount - ((this.isBlack())? 0 : 1)) return true;
-            }
-        }
+        //     Piece piece = board[r][newC];
+        //     if (piece.getColor() != this.color && piece instanceof Pawn) {
+        //         // Allow en passant if same turn
+        //         if (((Pawn)piece).getEnPassantTurn() == turnCount - ((this.isBlack())? 0 : 1)) return true;
+        //     }
+        // }
 
-        // If none of the conditions are met, the move is invalid
-        return false;
+        return this.isEnPassant(targetPosition, mContext);
     }
 
     @Override
@@ -126,6 +123,7 @@ public class Pawn extends PieceBehaviors {
     @Override
     public void move(Position p, MoveContext mContext) {
         if (this.isPushingTwoSquares(p, mContext)) this.enPassantTurn = mContext.getTurnCount();
+        if (this.isEnPassant(p, mContext)) mContext.getBoard()[this.position.getRow()][p.getColumn()] = null;
         super.move(p, mContext);
         // System.out.println("Pawn moved to " + p + " with en passant turn: " + this.enPassantTurn);
     }
@@ -144,6 +142,26 @@ public class Pawn extends PieceBehaviors {
             && board[twoUp][c] == null) 
                 return true;
 
+        return false;
+    }
+
+    private boolean isEnPassant(Position targetPosition, MoveContext mContext) {
+        int r = this.position.getRow();
+        int c = this.position.getColumn();
+        int newR = targetPosition.getRow();
+        int newC = targetPosition.getColumn();
+
+        var board = mContext.getBoard();
+        int dr = (this.isBlack())? 1 : -1;
+        int oppOnePawn = OPP_PAWN_ROW - dr;
+
+        if (r == oppOnePawn - dr && newR == oppOnePawn && Math.abs(newC - c) == 1 
+            && board[newR][newC] == null && board[r][newC] != null) {
+            Piece piece = board[r][newC];
+            if (piece.getColor() != this.color && piece instanceof Pawn) {
+                return ((Pawn)piece).getEnPassantTurn() == mContext.getTurnCount() - ((this.isBlack())? 0 : 1);
+            }
+        }
         return false;
     }
 

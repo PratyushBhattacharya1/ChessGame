@@ -185,8 +185,8 @@ public class Chessboard {
                 }
             }
         } else if (piece instanceof Pawn) {
-            Pawn pawn = (Pawn) piece;
-            // pawn.
+            // Pawn pawn = (Pawn) piece;
+            // if (startingPosition.getRow() == )
         }
 
         // Check for checkmate or stalemate
