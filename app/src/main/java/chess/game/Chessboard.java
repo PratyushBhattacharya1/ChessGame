@@ -157,6 +157,11 @@ public class Chessboard {
         Piece piece = board[startingPosition.getRow()][startingPosition.getColumn()];
         var mContext = new MoveContext(this.turnCount, this.getBoard());
 
+        if (piece == null || piece.getColor() != this.turnColor) {
+            System.out.println("Invalid move: No piece at starting position or wrong color");
+            return false;
+        }
+
         if (!MoveValidator.validateMove(piece, targetPosition, mContext)) 
             return false;
     

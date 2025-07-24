@@ -3,7 +3,7 @@ package chess.game;
 public class MoveValidator {
 
     public static boolean validateMove(Piece piece, Position targetPosition, MoveContext mContext) {
-        if (piece == null || !piece.isPseudoLegalMove(targetPosition, mContext)) {
+        if (!piece.isPseudoLegalMove(targetPosition, mContext)) {
             return false;
         }
 
