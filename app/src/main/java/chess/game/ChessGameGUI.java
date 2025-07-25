@@ -36,7 +36,6 @@ public class ChessGameGUI extends JFrame {
     };
 
     private Map<Class<? extends Piece>, ImageIcon[]> pieceIconMap = new HashMap<>();
-    private King inCheckKing = chessboard.isInCheck();
 
     public ChessGameGUI() {
         this.setTitle(TITLE);
@@ -46,6 +45,21 @@ public class ChessGameGUI extends JFrame {
         this.pack(); // Adjust window size to fit the chessboard
         this.setVisible(true);
         // setDefaultLookAndFeelDecorated(true);
+        chessboard.setPromotionListener((position, color) -> {
+            String[] options = {"Queen", "Rook", "Bishop", "Knight"};
+            String choice = (String) JOptionPane.showInputDialog(
+                this, "Promote pawn to:", "Pawn Promotion",
+                JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+            Piece promotedPiece;
+            switch (choice) {
+                case "Rook": promotedPiece = new Rook(position, color); break;
+                case "Bishop": promotedPiece = new Bishop(position, color); break;
+                case "Knight": promotedPiece = new Knight(position, color); break;
+                default: promotedPiece = new Queen(position, color);
+            }
+            chessboard.promotePawn(position, promotedPiece);
+            refreshBoard();
+        });
     }
 
     private void initializeBoard() {

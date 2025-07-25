@@ -35,6 +35,7 @@ public class Chessboard {
     private Set<Piece> whitePieces;
     private Set<Piece> blackPieces;
     private Position selectedPosition;
+    private PromotionListener promotionListener;
 
     /**
      * Initializes the chessboard with pieces in their starting positions.
@@ -161,6 +162,8 @@ public class Chessboard {
             System.out.println("Invalid move: No piece at starting position or wrong color");
             return false;
         }
+
+        this.checkPawnPromotion(piece, targetPosition);
 
         if (!MoveValidator.validateMove(piece, targetPosition, mContext)) 
             return false;
@@ -425,6 +428,23 @@ public class Chessboard {
         var king = (this.isWhiteTurn()) ? this.whiteKing : this.blackKing;
         if (king.isInCheck(mContext)) return king;
         else return null;
+    }
+
+    public void setPromotionListener(PromotionListener listener) {
+        this.promotionListener = listener;
+    }
+
+    private void checkPawnPromotion(Piece piece, Position targetPosition) {
+        if (piece instanceof Pawn) {
+            int promotionRow = (piece.getColor() == Color.White) ? 0 : BOARD_DIMENSIONS - 1;
+            if (targetPosition.getRow() == promotionRow && promotionListener != null) {
+                promotionListener.onPawnPromotion(targetPosition, piece.getColor());
+            }
+        }
+    }
+
+    public void promotePawn(Position position, Piece promotedPiece) {
+        this.getBoard()[position.getRow()][position.getColumn()] = promotedPiece;
     }
 
 }
