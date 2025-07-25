@@ -1,5 +1,5 @@
 package chess.game;
 
 public interface PromotionListener {
-    void onPawnPromotion(Position position, Color color);
+    void onPawnPromotion(Position position, Color color, Piece[][] board);
 }

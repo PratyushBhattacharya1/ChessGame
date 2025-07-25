@@ -7,6 +7,11 @@ public class MoveValidator {
             return false;
         }
 
+        if (piece instanceof King) {
+            // King moves are always legal
+            return true;
+        }
+
         // Simulate the move to check for self-check
         var newBoard = simulateMove(mContext.getBoard(), piece, targetPosition);
 
@@ -25,6 +30,20 @@ public class MoveValidator {
 
     public static Piece[][] simulateMove(Piece[][] board, Piece piece, Position targetPosition) {
         // Clone the board
+        Piece[][] newBoard = cloneBoard(board);
+
+        // Move the piece
+        int r = piece.getPosition().getRow();
+        int c = piece.getPosition().getColumn();
+        int newR = targetPosition.getRow();
+        int newC = targetPosition.getColumn();
+        newBoard[newR][newC] = newBoard[r][c];
+        newBoard[r][c] = null;
+        newBoard[newR][newC].getPosition().setPosition(targetPosition);
+        return newBoard;
+    }
+
+    public static Piece[][] cloneBoard(Piece[][] board) {
         Piece[][] newBoard = new Piece[board.length][board[0].length];
         for (int i = 0; i < board.length; i++) {
             for (int j = 0; j < board[i].length; j++) {
@@ -39,14 +58,6 @@ public class MoveValidator {
                 }
             }
         }
-        // Move the piece
-        int r = piece.getPosition().getRow();
-        int c = piece.getPosition().getColumn();
-        int newR = targetPosition.getRow();
-        int newC = targetPosition.getColumn();
-        newBoard[newR][newC] = newBoard[r][c];
-        newBoard[r][c] = null;
-        newBoard[newR][newC].getPosition().setPosition(targetPosition);
         return newBoard;
     }
 }

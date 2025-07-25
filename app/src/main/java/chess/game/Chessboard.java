@@ -2,8 +2,6 @@ package chess.game;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 import java.util.Stack;
 
@@ -154,42 +152,90 @@ public class Chessboard {
     public boolean tryMove(Position startingPosition, Position targetPosition) {
         if (this.gameState != GameState.ongoing) return false;
 
-        Piece[][] board = this.getBoard();
-        Piece piece = board[startingPosition.getRow()][startingPosition.getColumn()];
-        var mContext = new MoveContext(this.turnCount, this.getBoard());
+        var board = MoveValidator.cloneBoard(this.getBoard());
+        var mContext = new MoveContext(this.turnCount, board);
+
+        int row = startingPosition.getRow();
+        int col = startingPosition.getColumn();
+        Piece piece = board[row][col];
 
         if (piece == null || piece.getColor() != this.turnColor) {
             System.out.println("Invalid move: No piece at starting position or wrong color");
             return false;
         }
 
-        this.checkPawnPromotion(piece, targetPosition);
-
         if (!MoveValidator.validateMove(piece, targetPosition, mContext)) 
             return false;
 
-        piece.move(targetPosition, mContext);
-        board[startingPosition.getRow()][startingPosition.getColumn()] = null;
-        board[targetPosition.getRow()][targetPosition.getColumn()] = piece;
+        // boolean pawnPromoted = false;
+        if (this.checkPawnPromotion(piece, targetPosition, board)) {
+            board[row][col] = null;
+            whitePieces.remove(piece);
+            // Check for checkmate or stalemate
+            if (this.isInCheckmate(mContext)) {
+                this.gameState = (this.isWhiteTurn())? GameState.whiteWon : GameState.blackWon;
+            } else if (this.isStalemate(mContext)) {
+                this.gameState = GameState.draw;
+            }
 
+            this.addToMoveHistory(piece + " from " + startingPosition + " to " + targetPosition);
+            this.boardHistory.push(board);
+            this.endTurn();
+
+            return true;
+        }
+
+        // if (this.isWhiteTurn()) {
+        //     this.whitePieces.remove(piece);
+        //     this.whitePieces.add(piece);
+        // } else {
+        //     this.blackPieces.remove(piece);
+        //     this.blackPieces.add(piece);
+        // }
+
+        var piecesToUpdate = (this.isWhiteTurn())? this.whitePieces : this.blackPieces;
+        piecesToUpdate.remove(piece);
+
+
+        piece.move(targetPosition, mContext);
+        piecesToUpdate.add(piece);
+
+        board[row][col] = null;
+        int targetR = targetPosition.getRow();
+        int targetC = targetPosition.getColumn();
+        var captured = board[targetR][targetC];
+        board[targetR][targetC] = piece;
+
+        if (captured != null) {
+            if (this.isWhiteTurn()) {
+                this.blackPieces.remove(captured);
+            } else {
+                this.whitePieces.remove(captured);
+            }
+        }
+
+        if (this.isWhiteTurn()) {
+            this.whitePieces.remove(piece);
+            this.whitePieces.add(piece);
+        } else {
+            this.blackPieces.remove(piece);
+            this.blackPieces.add(piece);
+        }
         if (piece instanceof King) {
             King king = (King) piece;
             for (int i = 0; i < king.CASTLE_POSITION.length; i++) {
                 if (king.CASTLE_POSITION[i].equals(targetPosition)) {
-                    int row = king.CASTLE_POSITION[i].getRow();
+                    int rowK = king.CASTLE_POSITION[i].getRow();
                     int rCol = i == 0 ? 0 : BOARD_DIMENSIONS - 1;
 
-                    var rook = board[row][rCol];
-                    board[row][rCol] = null;
+                    var rook = board[rowK][rCol];
+                    board[rowK][rCol] = null;
 
                     int newRCol = i == 0 ? 3 : 5;
-                    board[row][newRCol] = rook;
-                    rook.move(new Position(row, newRCol), mContext);
+                    board[rowK][newRCol] = rook;
+                    rook.move(new Position(rowK, newRCol), mContext);
                 }
             }
-        } else if (piece instanceof Pawn) {
-            // Pawn pawn = (Pawn) piece;
-            // if (startingPosition.getRow() == )
         }
 
         // Check for checkmate or stalemate
@@ -366,7 +412,8 @@ public class Chessboard {
         var piece = board[row][col];
         var selPiece = (this.selectedPosition != null) ? board[selR][selC] : null;
 
-        if ((selPiece != null &&  selPiece.getColor() == this.turnColor) && (piece == null || piece.getColor() != this.turnColor)) {
+        if ((selPiece != null &&  selPiece.getColor() == this.turnColor) 
+            && (piece == null || piece.getColor() != this.turnColor)) {
             System.out.println("Moving from " + this.selectedPosition + " to " + p);
             if (!this.tryMove(this.selectedPosition, p)) {
                 System.out.println("Invalid move");
@@ -396,21 +443,6 @@ public class Chessboard {
         if (piece == null || piece.getColor() != this.turnColor) {
             return new HashSet<>();
         }
-        // MoveContext mContext = new MoveContext(this.turnCount, board);
-        // var moves = piece.generatePseudoLegalMoves(mContext);
-        // var it = moves.iterator();
-        // while (it.hasNext()) {
-        //     Position position = it.next();
-        //     var newBoard = this.movePiece(piece, position, mContext.getBoard());
-        //     var newContext = new MoveContext(this.turnCount, newBoard);
-        //     if (this.isWhiteTurn() && this.whiteKing.isInCheck(newContext)) {
-        //         it.remove();
-        //     }
-        //     else if (this.isBlackTurn() && this.blackKing.isInCheck(newContext)) {
-        //         it.remove();
-        //     }
-        //     board = this.movePiece(piece, new Position(row, col), board);
-        // }
 
         var moves = piece.generatePseudoLegalMoves(new MoveContext(this.turnCount, board));
         HashSet<Position> legalMoves = new HashSet<>();
@@ -419,7 +451,6 @@ public class Chessboard {
                 legalMoves.add(pos);
         }
         return legalMoves;
-        // return moves;
     }
 
     public King isInCheck() {
@@ -434,17 +465,33 @@ public class Chessboard {
         this.promotionListener = listener;
     }
 
-    private void checkPawnPromotion(Piece piece, Position targetPosition) {
+    private boolean checkPawnPromotion(Piece piece, Position targetPosition, Piece[][] board) {
         if (piece instanceof Pawn) {
-            int promotionRow = (piece.getColor() == Color.White) ? 0 : BOARD_DIMENSIONS - 1;
-            if (targetPosition.getRow() == promotionRow && promotionListener != null) {
-                promotionListener.onPawnPromotion(targetPosition, piece.getColor());
+            int promotionRow = (piece.isWhite()) ? 0 : BOARD_DIMENSIONS - 1;
+            if (targetPosition.getRow() == promotionRow && this.promotionListener != null) {
+                this.promotionListener.onPawnPromotion(targetPosition, piece.getColor(), board);
+                return true;
             }
         }
+        return false;
     }
 
-    public void promotePawn(Position position, Piece promotedPiece) {
-        this.getBoard()[position.getRow()][position.getColumn()] = promotedPiece;
+    public void promotePawn(Position position, Piece promotedPiece, Piece[][] board) {
+        int r = position.getRow();
+        int c = position.getColumn();
+        var captured = board[r][c];
+
+        if (captured != null) {
+            if (this.isWhiteTurn()) {
+                this.blackPieces.remove(captured);
+                this.whitePieces.add(promotedPiece);
+            } else {
+                this.whitePieces.remove(captured);
+                this.blackPieces.add(promotedPiece);
+            }
+        }
+
+        board[r][c] = promotedPiece;
     }
 
 }
