@@ -48,10 +48,11 @@ public class King extends SlidingPieces {
 
         // Check if the move would put the king in check
         King tempKing = new King(targetPosition, this.color);
+        board[r][c] = null; // Temporarily remove the king from its current position
         var mContext1 = new MoveContext(mContext.getTurnCount(), board);
-        if (tempKing.isInCheck(mContext1)) return false;
-
-        return true;
+        boolean inCheck = tempKing.isInCheck(mContext1);
+        board[r][c] = this; // Restore the king to its original position
+        return !inCheck;
     }
 
     public boolean canCastle(Position targetPosition, MoveContext mContext) {
@@ -152,6 +153,15 @@ public class King extends SlidingPieces {
 
     @Override
     public void move(Position position, MoveContext mContext) {
+        if (this.canCastle(position, mContext)) {
+            int rookR = this.isWhite() ? 7 : 0;
+            int rookC = (position.getColumn() == 2) ? 0 : 7;    // Determine rook column based on castling side
+            int newRookC = (position.getColumn() == 2) ? 3 : 5;     // New rook column after castling
+            Piece rook = mContext.getBoard()[rookR][rookC];
+            mContext.getBoard()[rookR][rookC] = null;               // Remove rook from its original position
+            rook.move(new Position(rookR, newRookC), mContext);
+            mContext.getBoard()[rookR][newRookC] = rook;            // Place rook in its new position
+        }
         super.move(position, mContext);
         this.hasMoved = true;
     }
