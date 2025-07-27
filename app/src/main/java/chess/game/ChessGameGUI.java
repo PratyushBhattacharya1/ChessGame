@@ -147,6 +147,22 @@ public class ChessGameGUI extends JFrame {
         }
     }
 
+    // private void loadIndividualSprites() {
+    //     String[] pieceNames = {"king", "queen", "bishop", "knight", "rook", "pawn"};
+    //     for (String pieceName : pieceNames) {
+    //         try {
+    //             ImageIcon whiteIcon = new ImageIcon(
+    //                 ImageIO.read(getClass().getResource("/" + pieceName + "_white.png")));
+    //             ImageIcon blackIcon = new ImageIcon(
+    //                 ImageIO.read(getClass().getResource("/" + pieceName + "_black.png")));
+    //             this.pieceIconMap.put(Class.forName("chess.game." + capiztalize(pieceName)),
+    //                 new ImageIcon[]{whiteIcon, blackIcon});
+    //         } catch (IOException | ClassNotFoundException e) {
+    //             System.out.println("Error loading individual sprite for " + pieceName + ": " + e.getMessage());
+    //         }
+    //     }
+    // }
+
     private void handleSquareClick(int row, int col) {
         this.clearHighlights();
         if (chessboard.handleSquareSelection(row, col)) {
